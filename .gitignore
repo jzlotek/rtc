@@ -1,0 +1,7 @@
+*.o
+*.ppm
+main
+cannon
+clock
+test
+.vscode/
