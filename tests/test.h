@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "../utils/consts.h"
+#include "../utils/funcs.h"
 #include "../base/tuple.h"
 
 #pragma once
@@ -12,54 +13,32 @@ typedef struct {
     char *description;
 } Test;
 
+TEMPLATE_ARRAY(Test);
+
 typedef struct {
     char *description;
-    int num_tests;
-    int tests_length;
-    Test *tests;
+    TestArray *tests;
 } Feature;
 
-static Feature *features = NULL;
-static int rtc_num_features;
+TEMPLATE_ARRAY(Feature);
+
+static FeatureArray *features = NULL;
 static int rtc_features_length;
 static int rtc_tests_passed;
 
-void clean_feaures() {
-    for (unsigned int i = 0; i < rtc_num_features; i++) {
-        Feature f = features[i];
-        free(f.tests);
-    }
-    free(features);
-}
-
 void AddFeature(Feature f) {
     if (features == NULL) {
-        features = (Feature*)malloc(sizeof(Feature) * 2);
-        rtc_features_length = 2;
-        rtc_num_features = 0;
+        features = Feature_array();
     }
-    if (rtc_features_length == rtc_num_features) {
-        features = (Feature*)realloc(features, sizeof(Feature) * 2 * rtc_features_length);
-        rtc_features_length *= 2;
-    }
-    features[rtc_num_features] = f;
-    rtc_num_features++;
+    Feature_arr_add(features, f);
 }
 
 void AddTest(Feature *f, void (*func)(), char *desc) {
     Test test = {func, desc};
     if (f->tests == NULL) {
-        f->tests = (Test*)malloc(sizeof(Test) * 2);
-        f->tests_length = 2;
-        f->num_tests = 0;
+        f->tests = Test_array();
     }
-    if (f->tests_length == f->num_tests) {
-        f->tests = (Test*)realloc(f->tests, sizeof(Test) * 2 * f->tests_length);
-        f->tests_length *= 2;
-    }
-
-    f->tests[f->num_tests] = test;
-    f->num_tests++;
+    Test_arr_add(f->tests, test);
 }
 
 static int rtc_statements_failed;
@@ -69,12 +48,12 @@ int RunTests() {
     int total_tests_run = 0;
     printf("RTC Tests\n");
 
-    for (unsigned int f = 0; f < rtc_num_features; f++) {
-        Feature feature = features[f];
+    for (unsigned int f = 0; f < features->length; f++) {
+        Feature feature = get_Feature_array(features, f);
         printf("\tFeature: %s\n", feature.description);
-        total_tests_run += feature.num_tests;
-        for (unsigned int i = 0; i < feature.num_tests; i++) {
-            Test t = feature.tests[i];
+        total_tests_run += feature.tests->length;
+        for (unsigned int i = 0; i < feature.tests->length; i++) {
+            Test t = get_Test_array(feature.tests, i);
             rtc_statements_failed = 0;
             printf("\t\tTest: %s ", t.description);
             t.func();
@@ -95,7 +74,10 @@ int RunTests() {
 
 int TestMain() {
     int result = RunTests();
-    clean_feaures();
+    for (unsigned int i = 0; i < features->length; i++) {
+        free_Test_array(get_Feature_array(features, i).tests);
+    }
+    free_Feature_array(features);
     return result;
 }
 
