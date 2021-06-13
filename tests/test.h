@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "consts.h"
+#include "../utils/consts.h"
 #include "../base/tuple.h"
 
 #pragma once
@@ -76,7 +76,7 @@ int RunTests() {
         for (unsigned int i = 0; i < feature.num_tests; i++) {
             Test t = feature.tests[i];
             rtc_statements_failed = 0;
-            printf("\t\tTest %s ", t.description);
+            printf("\t\tTest: %s ", t.description);
             t.func();
             if (rtc_statements_failed == 0) {
                 printf("%s\n", "✔️");
@@ -99,7 +99,7 @@ int TestMain() {
     return result;
 }
 
-bool TupleEqual(tuple *t1, tuple *t2) {
+bool TupleEqual(Tuple *t1, Tuple *t2) {
     bool result = equal(t1, t2);
     if (!result) {
         char buf[512];

@@ -1,6 +1,6 @@
-#include "matrix.h"
+#include "../base/matrix.h"
 #include "../utils/consts.h"
-#include "../utils/test.h"
+#include "test.h"
 
 #pragma once
 

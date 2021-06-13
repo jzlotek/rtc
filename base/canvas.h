@@ -9,20 +9,20 @@
 typedef struct {
     unsigned int width;
     unsigned int height;
-    tuple **__canvas;
+    Tuple **__canvas;
 } Canvas;
 
 Canvas *canvas(unsigned int width, unsigned int height);
 void free_canvas(Canvas *c);
-void write_pixel(Canvas *c, unsigned int x, unsigned int h, const tuple *color);
-tuple *pixel_at(Canvas *c, unsigned int x, unsigned int y);
+void write_pixel(Canvas *c, unsigned int x, unsigned int h, const Tuple *color);
+Tuple *pixel_at(Canvas *c, unsigned int x, unsigned int y);
 void canvas_to_ppm(Canvas *c, FILE *stream);
 
 Canvas *canvas(unsigned int width, unsigned int height) {
     Canvas *c = (Canvas*)malloc(sizeof(Canvas));
     c->height = height;
     c->width = width;
-    c->__canvas = (tuple**)malloc(sizeof(tuple*) * width * height);
+    c->__canvas = (Tuple**)malloc(sizeof(Tuple*) * width * height);
     unsigned int SIZE = width * height;
     for (unsigned int i = 0; i < SIZE; i++) {
         c->__canvas[i] = vec(0,0,0);
@@ -39,16 +39,16 @@ void free_canvas(Canvas *c) {
     free(c);
 }
 
-void write_pixel(Canvas *c, unsigned int x, unsigned int h, const tuple *color) {
+void write_pixel(Canvas *c, unsigned int x, unsigned int h, const Tuple *color) {
     if (x < 0 || x >= c->width) return;
     if (h < 0 || h >= c->height) return;
-    tuple * pixel = c->__canvas[x + c->width * h];
+    Tuple * pixel = c->__canvas[x + c->width * h];
     pixel->x = color->x;
     pixel->y = color->y;
     pixel->z = color->z;
 }
 
-tuple *pixel_at(Canvas *c, unsigned int x, unsigned int y) {
+Tuple *pixel_at(Canvas *c, unsigned int x, unsigned int y) {
     return c->__canvas[x + (c->width * y)];
 }
 
@@ -64,7 +64,7 @@ void canvas_to_ppm(Canvas *c, FILE *stream) {
             chars_written = 0;
             fprintf(stream, "\n");
         }
-        tuple *pixel = pixel_at(c, i % c->width, i / c->width);
+        Tuple *pixel = pixel_at(c, i % c->width, i / c->width);
         int x = CLAMP(0, (int)(pixel->x * 255), 255);
         int y = CLAMP(0, (int)(pixel->y * 255), 255);
         int z = CLAMP(0, (int)(pixel->z * 255), 255);

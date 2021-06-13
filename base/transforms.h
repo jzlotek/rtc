@@ -6,7 +6,7 @@
 
 #pragma once
 
-tuple *apply(tuple *point, const Matrix *transform);
+Tuple *apply(Tuple *point, const Matrix *transform);
 Matrix *translation(float x, float y, float z);
 Matrix *scaling(float x, float y, float z);
 Matrix *rotation_x(float r);
@@ -15,15 +15,15 @@ Matrix *rotation_z(float r);
 Matrix *shear(float xy, float xz, float yx, float yz, float zx, float zy);
 Matrix *chain_matmul(int count, ...);
 
-float __mult_row(tuple *t, const Matrix *m, unsigned int r) {
+float __mult_row(Tuple *t, const Matrix *m, unsigned int r) {
     return m->data[r][0] * t->x +
         m->data[r][1] * t->y +
         m->data[r][2] * t->z +
         m->data[r][3] * t->w;
 }
 
-tuple *apply(tuple *point, const Matrix *transform) {
-    tuple *tmp = vec(0, 0, 0);
+Tuple *apply(Tuple *point, const Matrix *transform) {
+    Tuple *tmp = vec(0, 0, 0);
     tmp->x = __mult_row(point, transform, 0);
     tmp->y = __mult_row(point, transform, 1);
     tmp->z = __mult_row(point, transform, 2);

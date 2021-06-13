@@ -1,6 +1,6 @@
-#include "transforms.h"
+#include "../base/transforms.h"
 #include "../utils/consts.h"
-#include "../utils/test.h"
+#include "test.h"
 #include <math.h>
 
 #pragma once
@@ -8,8 +8,8 @@
 void PointMatrixMult() {
     Matrix *t = translation(5, -3, 2);
     Matrix *t_inv = inverse(t);
-    tuple *p = point(-3, 4, 5);
-    tuple *exp = point(2, 1, 7);
+    Tuple *p = point(-3, 4, 5);
+    Tuple *exp = point(2, 1, 7);
     apply(p, t);
     TupleEqual(p, exp);
     free(exp);
@@ -23,8 +23,8 @@ void PointMatrixMult() {
 void VecMatrixMult() {
     Matrix *t = translation(5, -3, 2);
     Matrix *t_inv = inverse(t);
-    tuple *p = vec(-3, 4, 5);
-    tuple *exp = vec(-3, 4, 5);
+    Tuple *p = vec(-3, 4, 5);
+    Tuple *exp = vec(-3, 4, 5);
     apply(p, t);
     TupleEqual(p, exp);
 
@@ -33,8 +33,8 @@ void VecMatrixMult() {
 
 void PointMatrixScale() {
     Matrix *t = scaling(2, 3, 4);
-    tuple *p = point(-1, 3, 5);
-    tuple *exp = point(-2, 9, 20);
+    Tuple *p = point(-1, 3, 5);
+    Tuple *exp = point(-2, 9, 20);
     apply(p, t);
     TupleEqual(p, exp);
 
@@ -44,8 +44,8 @@ void PointMatrixScale() {
 void PointRotateX() {
     Matrix *half_quarter = rotation_x(M_PI_4);
     Matrix *full_quarter = rotation_x(M_PI_2);
-    tuple *p = point(0, 1, 0);
-    tuple *exp = point(0, sqrt(2) / 2, sqrt(2) / 2);
+    Tuple *p = point(0, 1, 0);
+    Tuple *exp = point(0, sqrt(2) / 2, sqrt(2) / 2);
     TupleEqual(apply(p, half_quarter), exp);
     free(exp); free(p);
     p = point(0, 1, 0);
@@ -58,8 +58,8 @@ void PointRotateX() {
 void PointRotateY() {
     Matrix *half_quarter = rotation_y(M_PI_4);
     Matrix *full_quarter = rotation_y(M_PI_2);
-    tuple *p = point(0, 0, 1);
-    tuple *exp = point(sqrt(2) / 2, 0, sqrt(2) / 2);
+    Tuple *p = point(0, 0, 1);
+    Tuple *exp = point(sqrt(2) / 2, 0, sqrt(2) / 2);
     TupleEqual(apply(p, half_quarter), exp);
     free(exp); free(p);
     p = point(0, 0, 1);
@@ -72,8 +72,8 @@ void PointRotateY() {
 void PointRotateZ() {
     Matrix *half_quarter = rotation_z(M_PI_4);
     Matrix *full_quarter = rotation_z(M_PI_2);
-    tuple *p = point(0, 1, 0);
-    tuple *exp = point(-sqrt(2) / 2, sqrt(2) / 2, 0);
+    Tuple *p = point(0, 1, 0);
+    Tuple *exp = point(-sqrt(2) / 2, sqrt(2) / 2, 0);
     TupleEqual(apply(p, half_quarter), exp);
     free(exp); free(p);
     p = point(0, 1, 0);
@@ -83,7 +83,7 @@ void PointRotateZ() {
     free(p); free(exp); free(half_quarter); free(full_quarter);
 }
 
-void __ShearPointHelper(tuple p, tuple exp, float a, float b, float c, float d, float e, float f) {
+void __ShearPointHelper(Tuple p, Tuple exp, float a, float b, float c, float d, float e, float f) {
     Matrix *t = shear(a,b,c,d,e,f);
     TupleEqual(apply(&p, t), &exp);
     free(t);
@@ -92,7 +92,7 @@ void __ShearPointHelper(tuple p, tuple exp, float a, float b, float c, float d, 
 void ShearPoint() {
     #define NUM_TESTS 6
 
-    tuple points[NUM_TESTS] = {
+    Tuple points[NUM_TESTS] = {
         {2, 3, 4},
         {2, 3, 4},
         {2, 3, 4},
@@ -100,7 +100,7 @@ void ShearPoint() {
         {2, 3, 4},
         {2, 3, 4},
     };
-    tuple exp[NUM_TESTS] = {
+    Tuple exp[NUM_TESTS] = {
         {5, 3, 4},
         {6, 3, 4},
         {2, 5, 4},
@@ -114,8 +114,8 @@ void ShearPoint() {
 }
 
 void TestChainMatMul() {
-    tuple *p = point(1, 0, 1);
-    tuple *exp = point(15, 0, 7);
+    Tuple *p = point(1, 0, 1);
+    Tuple *exp = point(15, 0, 7);
     Matrix *t = chain_matmul(3, rotation_x(M_PI_2), scaling(5, 5, 5), translation(10, 5, 7));
     apply(p, t);
     TupleEqual(p, exp);

@@ -1,6 +1,6 @@
-#include "canvas.h"
+#include "../base/canvas.h"
 #include "../utils/consts.h"
-#include "../utils/test.h"
+#include "test.h"
 
 #pragma once
 
@@ -9,7 +9,7 @@ void TestCanvasCreation() {
     Canvas *c = canvas(10, 20);
     Equal(c->width, 10);
     Equal(c->height, 20);
-    tuple color = {0,0,0};
+    Tuple color = {0,0,0};
 
     for (unsigned int i = 0; i < c->width * c->height; i++) {
         TupleEqual(c->__canvas[i], &color);
@@ -20,10 +20,10 @@ void TestCanvasCreation() {
 
 void TestPixelWrite() {
     Canvas *c = canvas(10, 20);
-    tuple *red = vec(1, 0, 0);
+    Tuple *red = vec(1, 0, 0);
     Equal(c->width, 10);
     Equal(c->height, 20);
-    tuple color = {0,0,0};
+    Tuple color = {0,0,0};
 
     write_pixel(c, 2, 3, red);
     TupleEqual(red, pixel_at(c, 2, 3));

@@ -4,13 +4,13 @@
 
 int main(void) {
   Canvas *c = canvas(100, 100);
-  tuple *c1 = vec(1, 1, 1);
+  Tuple *c1 = vec(1, 1, 1);
 
   const int HALF_H = 50;
   const int HALF_W = 50;
 
   for (unsigned int i = 0; i < 12; i++) {
-    tuple *hand = vec(0, 1, 0);
+    Tuple *hand = vec(0, 1, 0);
     Matrix *t = chain_matmul(3,
         scaling(0, 25, 0),
         translation(0, 50, 0),

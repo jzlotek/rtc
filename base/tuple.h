@@ -9,34 +9,35 @@
 
 typedef struct {
     float x,y,z,w;
-} tuple;
+} Tuple;
 
-bool isPoint(tuple *t);
-bool isVector(tuple *t);
-void print_tuple(tuple *t);
-tuple *copy_from(tuple *dest, const tuple *src);
-bool equal(const tuple *t1, const tuple *t2);
-tuple *point(float x, float y, float z);
-tuple *vec(float x, float y, float z);
-tuple *add(tuple *t1, const tuple *t2);
-tuple *sub(tuple *t1, const tuple *t2);
-tuple *mult(tuple *t1, float c);
-tuple *divide(tuple *t1, float c);
-tuple *prod(tuple *t1, const tuple *t2);
-tuple *cross(const tuple *t1, const tuple *t2);
-float dot(tuple *t1, tuple *t2);
-tuple *norm(tuple *t);
-float magnitude(const tuple *t);
+bool isPoint(Tuple *t);
+bool isVector(Tuple *t);
+void print_tuple(Tuple *t);
+Tuple *copy_tuple(const Tuple *src);
+Tuple *copy_from(Tuple *dest, const Tuple *src);
+bool equal(const Tuple *t1, const Tuple *t2);
+Tuple *point(float x, float y, float z);
+Tuple *vec(float x, float y, float z);
+Tuple *add(Tuple *t1, const Tuple *t2);
+Tuple *sub(Tuple *t1, const Tuple *t2);
+Tuple *mult(Tuple *t1, float c);
+Tuple *divide(Tuple *t1, float c);
+Tuple *prod(Tuple *t1, const Tuple *t2);
+Tuple *cross(const Tuple *t1, const Tuple *t2);
+float dot(Tuple *t1, Tuple *t2);
+Tuple *norm(Tuple *t);
+float magnitude(const Tuple *t);
 
-bool isPoint(tuple *t) {
+bool isPoint(Tuple *t) {
     return fabs(t->w - 1.0f) < EPSILON;
 }
 
-bool isVector(tuple *t) {
+bool isVector(Tuple *t) {
     return fabs(t->w) < EPSILON;
 }
 
-void print_tuple(tuple *t) {
+void print_tuple(Tuple *t) {
     if (isPoint(t)) {
         printf("(%.6f, %6f, %.6f, %.6f)", t->x, t->y, t->z, t->w);
     } else {
@@ -44,7 +45,12 @@ void print_tuple(tuple *t) {
     }
 }
 
-tuple *copy_from(tuple *dest, const tuple *src) {
+Tuple *copy_tuple(const Tuple *src) {
+    Tuple *t = point(0,0,0);
+    return copy_from(t, src);
+}
+
+Tuple *copy_from(Tuple *dest, const Tuple *src) {
     dest->x = src->x;
     dest->y = src->y;
     dest->z = src->z;
@@ -52,7 +58,7 @@ tuple *copy_from(tuple *dest, const tuple *src) {
     return dest;
 }
 
-bool equal(const tuple *t1, const tuple *t2) {
+bool equal(const Tuple *t1, const Tuple *t2) {
     // TODO: SIMD
     return
         fabs(t1->x - t2->x) < EPSILON &&
@@ -61,8 +67,8 @@ bool equal(const tuple *t1, const tuple *t2) {
         fabs(t1->w - t2->w) < EPSILON;
 }
 
-tuple *point(float x, float y, float z) {
-    tuple *r = (tuple*)malloc(sizeof(tuple));
+Tuple *point(float x, float y, float z) {
+    Tuple *r = (Tuple*)malloc(sizeof(Tuple));
     r->x = x;
     r->y = y;
     r->z = z;
@@ -70,8 +76,8 @@ tuple *point(float x, float y, float z) {
     return r;
 }
 
-tuple *vec(float x, float y, float z) {
-    tuple *r = (tuple*)malloc(sizeof(tuple));
+Tuple *vec(float x, float y, float z) {
+    Tuple *r = (Tuple*)malloc(sizeof(Tuple));
     r->x = x;
     r->y = y;
     r->z = z;
@@ -79,7 +85,7 @@ tuple *vec(float x, float y, float z) {
     return r;
 }
 
-tuple *add(tuple *t1, const tuple *t2) {
+Tuple *add(Tuple *t1, const Tuple *t2) {
     t1->x += t2->x;
     t1->y += t2->y;
     t1->z += t2->z;
@@ -87,7 +93,7 @@ tuple *add(tuple *t1, const tuple *t2) {
     return t1;
 }
 
-tuple *sub(tuple *t1, const tuple *t2) {
+Tuple *sub(Tuple *t1, const Tuple *t2) {
     t1->x -= t2->x;
     t1->y -= t2->y;
     t1->z -= t2->z;
@@ -95,7 +101,7 @@ tuple *sub(tuple *t1, const tuple *t2) {
     return t1;
 }
 
-tuple *neg(tuple *t1) {
+Tuple *neg(Tuple *t1) {
     t1->x = -t1->x;
     t1->y = -t1->y;
     t1->z = -t1->z;
@@ -103,7 +109,7 @@ tuple *neg(tuple *t1) {
     return t1;
 }
 
-tuple *mult(tuple *t1, float c) {
+Tuple *mult(Tuple *t1, float c) {
     t1->x *= c;
     t1->y *= c;
     t1->z *= c;
@@ -111,7 +117,7 @@ tuple *mult(tuple *t1, float c) {
     return t1;
 }
 
-tuple *prod(tuple *t1, const tuple *t2) {
+Tuple *prod(Tuple *t1, const Tuple *t2) {
     t1->x *= t2->x;
     t1->y *= t2->y;
     t1->z *= t2->z;
@@ -119,7 +125,7 @@ tuple *prod(tuple *t1, const tuple *t2) {
     return t1;
 }
 
-tuple *divide(tuple *t1, float c) {
+Tuple *divide(Tuple *t1, float c) {
     t1->x /= c;
     t1->y /= c;
     t1->z /= c;
@@ -127,7 +133,7 @@ tuple *divide(tuple *t1, float c) {
     return t1;
 }
 
-float magnitude(const tuple *t){
+float magnitude(const Tuple *t){
     float a = t->x * t->x;
     float b = t->y * t->y;
     float c = t->z * t->z;
@@ -136,13 +142,13 @@ float magnitude(const tuple *t){
     return sqrt(a + b + c + d);
 }
 
-tuple *norm(tuple *t) {
+Tuple *norm(Tuple *t) {
     float d = magnitude(t);
     divide(t, d);
     return t;
 }
 
-float dot(tuple *t1, tuple *t2) {
+float dot(Tuple *t1, Tuple *t2) {
     float a = t1->x * t2->x;
     float b = t1->y * t2->y;
     float c = t1->z * t2->z;
@@ -150,12 +156,12 @@ float dot(tuple *t1, tuple *t2) {
     return a + b + c + d;
 }
 
-tuple *cross(const tuple *a, const tuple *b) {
+Tuple *cross(const Tuple *a, const Tuple *b) {
     if (a->w != 0 || b->w != 0) {
         perror("Cannot call cross on points (w must be equal to 0)");
         exit(1);
     }
-    tuple *res = vec(0,0,0);
+    Tuple *res = vec(0,0,0);
     res->x = a->y * b->z - a->z * b->y;
     res->y = a->z * b->x - a->x * b->z;
     res->z = a->x * b->y - a->y * b->x;
