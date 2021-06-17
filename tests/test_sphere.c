@@ -43,11 +43,81 @@ void TestSphereIntersectMiss() {
     free_ray(r); free_Intersection_array(arr); free_sphere(s);
 }
 
+void TestSphereNormals() {
+    Sphere *s = sphere();
+
+    Tuple norms[4] = {
+        {1, 0, 0, 1},
+        {0, 1, 0, 1},
+        {0, 0, 1, 1},
+        {sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3, 1},
+    };
+    Tuple exp[4] = {
+        {1, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1},
+        {sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3},
+    };
+
+    for (unsigned int i = 0; i < 1; i++) {
+        Tuple *res = normal_at(s, &norms[i]);
+        TupleEqual(res, &exp[i]);
+        Equal(magnitude(res), 1);
+        free(res);
+    }
+
+    free_sphere(s);
+}
+
+void TestSphereNormalsTranslate() {
+    Sphere *s = sphere();
+    set_transform(s, translation(0, 1, 0));
+
+    Tuple *p = point(0, 1.70711, -0.70711);
+    Tuple *res = normal_at(s, p);
+    Tuple *exp = vec(0, 0.70711, -0.70711);
+
+    TupleEqual(res, exp);
+    Equal(magnitude(res), 1);
+    free(res); free_sphere(s); free(p); free(exp);
+}
+
+void TestSphereNormalsScaleRot() {
+    Sphere *s = sphere();
+    set_transform(s, chain_matmul(2,
+        rotation_z(M_PI / 5),
+        scaling(1.0, 0.5, 1.0)
+    ));
+
+    Tuple *p = point(0, sqrt(2)/2, -sqrt(2)/2);
+    Tuple *res = normal_at(s, p);
+    Tuple *exp = vec(0, 0.97014, -0.24254);
+
+    TupleEqual(res, exp);
+    free(res); free_sphere(s); free(p); free(exp);
+}
+
+void TestSphereMaterialDefault() {
+    Sphere *s = sphere();
+    Material *m = material();
+    m->ambient = 1.0;
+    set_material(s, m);
+    Equal(s->material->ambient, 1.0);
+    Equal(s->material->diffuse, 0.9);
+    Equal(s->material->specular, 0.9);
+    Equal(s->material->shininess, 200.0);
+    free_sphere(s);
+}
+
 void  TestSphere() {
   Feature f = {"Spheres"};
   AddTest(&f, TestSphereDefault, "A sphere's default transformation");
   AddTest(&f, TestSphereTransform, "Changing the sphere's transform");
   AddTest(&f, TestSphereIntersect, "Intersecting a scaled sphere with a ray");
   AddTest(&f, TestSphereIntersectMiss, "Intersecting a translated sphere with a ray");
+  AddTest(&f, TestSphereNormals, "The normal on a sphere at points");
+  AddTest(&f, TestSphereNormalsTranslate, "The normal on a translated sphere at points");
+  AddTest(&f, TestSphereNormalsScaleRot, "The normal on a transformed sphere at points");
+  AddTest(&f, TestSphereMaterialDefault, "Sphere Material");
   AddFeature(f);
 }

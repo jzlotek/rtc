@@ -4,9 +4,16 @@
 #include "../solids/sphere.h"
 
 int main(void) {
-  Canvas *c = canvas(100, 100);
+  Canvas *c = canvas(512, 512);
   Tuple *white = vec(1, 1, 1);
   Sphere *s = sphere();
+  Tuple color = {1, 0.2, 1};
+  copy_from(s->material->color, &color);
+
+
+  Tuple *light_position = point(-10, 10, -10);
+  Tuple *light_color = vec(1,1,1);
+  Light *light = point_light(light_color, light_position);
 
   int HALF_H = c->height / 2;
   int HALF_W = c->width / 2;
@@ -25,8 +32,14 @@ int main(void) {
         IntersectionArray *arr = intersect(s, r);
         Intersection h = hit(arr);
 
-        if (h.solid != NULL) 
-            write_pixel(c, i, j, white);
+        if (h.solid != NULL)  {
+            Tuple *point = position(r, h.t);
+            Tuple *n = normal_at((Sphere*)h.solid, point);
+            Tuple *eye = mult(r->direction, -1);
+            Tuple *col = lighting(((Sphere*)h.solid)->material, light, point, eye, n);
+            write_pixel(c, i, j, col);
+            free(point); free(n); free(col);
+        }
 
         free_ray(r); free_Intersection_array(arr); free(w_pos);
     }

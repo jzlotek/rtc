@@ -235,6 +235,26 @@ void TestColorProd() {
   free(c1); free(c2);
 }
 
+void TestReflect() {
+  Tuple vs[2] = {
+    {1, -1, 0},
+    {0, -1, 0}
+  };
+  Tuple ns[2] = {
+    {0, 1, 0},
+    {sqrt(2)/2, sqrt(2)/2,0}
+  };
+  Tuple exps[2] = {
+    {1,1,0},
+    {1,0,0}
+  };
+
+  for (unsigned int i = 0; i < 2; i++) {
+    reflect(&vs[i], &ns[i]);
+    TupleEqual(&vs[i], &exps[i]);
+  }
+}
+
 void TestTupleFeature() {
   Feature f = {"Tuples, Vectors, and Points"};
   AddTest(&f, TestPoint, "A Tuple with w=1.0 is a point");
@@ -259,5 +279,6 @@ void TestTupleFeature() {
   AddTest(&f, TestColorSub, "Sutracting Colors");
   AddTest(&f, TestColorMult, "Multuplying Color by a Scalar");
   AddTest(&f, TestColorProd, "Multuplying Color by a Color");
+  AddTest(&f, TestReflect, "Reflecting Vectors");
   AddFeature(f);
 }

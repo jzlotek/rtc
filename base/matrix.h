@@ -12,6 +12,7 @@ typedef struct {
 
 Matrix *matrix(float data[4][4], unsigned int rows, unsigned int cols);
 Matrix *copy(const Matrix *src);
+Tuple *apply(Tuple *point, const Matrix *transform);
 bool mateq(const Matrix *m1, const Matrix *m2);
 Matrix *matmul(const Matrix *m1, const Matrix *m2);
 Matrix *I();
@@ -44,6 +45,24 @@ Matrix *copy(const Matrix *src) {
     m->cols = src->cols;
     m->rows = src->rows;
     return m;
+}
+
+float __mult_row(Tuple *t, const Matrix *m, unsigned int r) {
+    return m->data[r][0] * t->x +
+        m->data[r][1] * t->y +
+        m->data[r][2] * t->z +
+        m->data[r][3] * t->w;
+}
+
+Tuple *apply(Tuple *point, const Matrix *transform) {
+    Tuple *tmp = vec(0, 0, 0);
+    tmp->x = __mult_row(point, transform, 0);
+    tmp->y = __mult_row(point, transform, 1);
+    tmp->z = __mult_row(point, transform, 2);
+    tmp->w = __mult_row(point, transform, 3);
+    copy_from(point, tmp);
+    free(tmp);
+    return point;
 }
 
 bool mateq(const Matrix *m1, const Matrix *m2) {

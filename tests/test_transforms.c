@@ -90,9 +90,7 @@ void __ShearPointHelper(Tuple p, Tuple exp, float a, float b, float c, float d, 
 }
 
 void ShearPoint() {
-    #define NUM_TESTS 6
-
-    Tuple points[NUM_TESTS] = {
+    Tuple points[6] = {
         {2, 3, 4},
         {2, 3, 4},
         {2, 3, 4},
@@ -100,7 +98,7 @@ void ShearPoint() {
         {2, 3, 4},
         {2, 3, 4},
     };
-    Tuple exp[NUM_TESTS] = {
+    Tuple exp[6] = {
         {5, 3, 4},
         {6, 3, 4},
         {2, 5, 4},
@@ -108,7 +106,7 @@ void ShearPoint() {
         {2, 3, 6},
         {2, 3, 7},
     };
-    for (unsigned int i = 0; i < NUM_TESTS; i++) {
+    for (unsigned int i = 0; i < 6; i++) {
         __ShearPointHelper(points[i], exp[i], i==0, i==1, i==2, i==3, i==4, i==5);
     }
 }

@@ -1,4 +1,4 @@
-.PHONY: test cannon_ppm clock sphere
+.PHONY: test cannon clock sphere phong
 
 CC=gcc
 CFLAGS=-O2 -g -lm
@@ -21,3 +21,7 @@ clock: demos/clock.c
 sphere: demos/sphere.c
 	$(CC) $(CFLAGS) $^ -o $@
 	./$@ | pnmtopng > sphere.png
+
+phong: demos/phong.c
+	$(CC) $(CFLAGS) $^ -o $@
+	./$@ | pnmtopng > phong.png

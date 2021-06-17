@@ -96,6 +96,22 @@ void MatrixMultiply() {
     free(mat); free(mat2); free(exp); free(res);
 }
 
+void MatTupleMult() {
+    float data[4][4] = {
+        { 1 , 2 , 3 , 4 },
+        { 2 , 4 , 4 , 2 },
+        { 8 , 6 , 4 , 1 },
+        { 0 , 0 , 0 , 1 }
+    };
+    Matrix *mat = matrix(data, 4, 4);
+    Tuple *p = point(1,2,3);
+    Tuple *exp = point(18, 24, 33);
+
+    TupleEqual(apply(p, mat), exp);
+
+    free(mat); free(exp); free(p);
+}
+
 void MatrixMultiplyI() {
     float data[4][4] = {
         { 1 , 2 , 3 , 4 },
@@ -289,6 +305,7 @@ void TestMatrixFeature() {
   AddTest(&f, MatrixMultiplyI, "Matrix multiply identity");
   AddTest(&f, MatrixTranspose, "Matrix transpose");
   AddTest(&f, Submatrix, "A submatrix of a 3x3 matrix is a 2x2 matrix");
+  AddTest(&f, MatTupleMult, "matrix multiplied by a tuple");
   AddTest(&f, Matrix2Determinate, "Calculating the determinant of a 2x2 matrix");
   AddTest(&f, MatrixMinor, "Calculating a minor of a 3x3 matrix");
   AddTest(&f, MatrixCofactor, "Calculating a cofactor of a 3x3 matrix");

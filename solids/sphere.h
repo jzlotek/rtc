@@ -1,6 +1,7 @@
 #include "../base/ray.h"
 #include "../base/matrix.h"
 #include "../utils/funcs.h"
+#include "../base/light.h"
 
 #pragma once
 
@@ -8,6 +9,7 @@ typedef struct {
     float radius;
     Tuple *center;
     Matrix *transform;
+    Material *material;
 } Sphere;
 
 TEMPLATE_ARRAY(Intersection);
@@ -15,6 +17,7 @@ TEMPLATE_ARRAY(Intersection);
 Sphere *sphere();
 void free_sphere(Sphere *sphere);
 void set_transform(Sphere *sphere, Matrix *m);
+void set_material(Sphere *sphere, Material *m);
 IntersectionArray *intersect(Sphere *sphere, const Ray *r);
 Intersection intersection(float t, Sphere *s);
 
@@ -23,10 +26,14 @@ Sphere *sphere() {
     s->radius = 1.0;
     s->center = point(0, 0, 0);
     s->transform = I();
+    s->material = material();
     return s;
 }
 
 void free_sphere(Sphere *sphere) {
+    if (sphere->material != NULL) {
+        free_material(sphere->material);
+    }
     free(sphere->transform);
     free(sphere->center);
     free(sphere);
@@ -35,6 +42,11 @@ void free_sphere(Sphere *sphere) {
 void set_transform(Sphere *sphere, Matrix *m) {
     if (sphere->transform != NULL) free(sphere->transform);
     sphere->transform = m;
+}
+
+void set_material(Sphere *sphere, Material *m) {
+    if (sphere->material != NULL) free_material(sphere->material);
+    sphere->material = m;
 }
 
 IntersectionArray *intersect(Sphere *sphere, const Ray *ra) {
@@ -83,4 +95,15 @@ Intersection hit(IntersectionArray *arr) {
         }
     }
     return ret;
+}
+
+Tuple *normal_at(const Sphere *s, const Tuple *pos) {
+    Tuple *world_point = copy_tuple(pos);
+    Matrix *transform_inv = inverse(s->transform);
+    sub(apply(world_point, transform_inv), s->center);
+    Tuple *world_normal = apply(world_point, transpose(transform_inv));
+    world_normal->w = 0;
+
+    free(transform_inv);
+    return norm(world_normal);
 }

@@ -6,6 +6,8 @@
 #include "test_transforms.c"
 #include "test_ray.c"
 #include "test_sphere.c"
+#include "test_lights.c"
+#include "test_materials.c"
 
 int main() {
   TestTupleFeature();
@@ -14,5 +16,7 @@ int main() {
   TestTransformsFeature();
   TestRay();
   TestSphere();
+  TestLightsFeature();
+  TestMaterialsFeature();
   return TestMain();
 }

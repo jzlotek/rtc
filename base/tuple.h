@@ -25,9 +25,10 @@ Tuple *mult(Tuple *t1, float c);
 Tuple *divide(Tuple *t1, float c);
 Tuple *prod(Tuple *t1, const Tuple *t2);
 Tuple *cross(const Tuple *t1, const Tuple *t2);
-float dot(Tuple *t1, Tuple *t2);
+float dot(const Tuple *t1, const Tuple *t2);
 Tuple *norm(Tuple *t);
 float magnitude(const Tuple *t);
+Tuple *reflect(Tuple *a, const Tuple *b);
 
 bool isPoint(Tuple *t) {
     return fabs(t->w - 1.0f) < EPSILON;
@@ -143,12 +144,10 @@ float magnitude(const Tuple *t){
 }
 
 Tuple *norm(Tuple *t) {
-    float d = magnitude(t);
-    divide(t, d);
-    return t;
+    return divide(t, magnitude(t));
 }
 
-float dot(Tuple *t1, Tuple *t2) {
+float dot(const Tuple *t1, const Tuple *t2) {
     float a = t1->x * t2->x;
     float b = t1->y * t2->y;
     float c = t1->z * t2->z;
@@ -165,5 +164,12 @@ Tuple *cross(const Tuple *a, const Tuple *b) {
     res->x = a->y * b->z - a->z * b->y;
     res->y = a->z * b->x - a->x * b->z;
     res->z = a->x * b->y - a->y * b->x;
+    return res;
+}
+
+Tuple *reflect(Tuple *a, const Tuple *b) {
+    Tuple *b_cpy = copy_tuple(b);
+    Tuple *res =  sub(a, mult(b_cpy, 2 * dot(a, b)));
+    free(b_cpy);
     return res;
 }
