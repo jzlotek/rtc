@@ -183,16 +183,7 @@ Tuple *color_at(World *w, Ray *r) {
     }
 
     WorldComputation *comps = prepare_computations(i, r);
-    // printf("\n");
-    // print_tuple(comps->point);
-    // printf("\n");
-    // print_tuple(comps->eyev);
-    // printf("\n");
-    // print_tuple(comps->normalv);
-    // printf("\n");
     Tuple *c = shade_hit(w, comps);
-    // print_tuple(c);
-    // printf("\n");
-    clean_Intersection_array(ia); free_Intersection_array(ia); free(i);
+    clean_Intersection_array(ia); free_Intersection_array(ia); free(i); free_world_computation(comps);
     return c;
 }

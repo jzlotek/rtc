@@ -10,6 +10,7 @@
 #include "test_materials.c"
 #include "test_world.c"
 #include "test_intersections.c"
+#include "test_camera.c"
 
 int main() {
   TestTupleFeature();
@@ -22,5 +23,6 @@ int main() {
   TestMaterialsFeature();
   TestWorldFeature();
   TestIntersectionsFeature();
+  TestCameraFeature();
   return TestMain();
 }

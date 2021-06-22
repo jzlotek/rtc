@@ -24,6 +24,7 @@ typedef struct {
 Light *point_light(Tuple *intensity, Tuple *position);
 void free_point_light(Light *light);
 Material *material();
+Material *copy_material(const Material *m);
 void set_color(Material *m, Tuple *color);
 void free_material(Material *m);
 Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv);
@@ -49,6 +50,16 @@ Material *material() {
     m->specular = 0.9;
     m->shininess = 200.0;
     return m;
+}
+
+Material *copy_material(const Material *m) {
+    Material *cp = material();
+    copy_from(cp->color, m->color);
+    cp->ambient = m->ambient;
+    cp->diffuse = m->diffuse;
+    cp->specular = m->specular;
+    cp->shininess = m->shininess;
+    return cp;
 }
 
 void set_color(Material *m, Tuple *color) {
