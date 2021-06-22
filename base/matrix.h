@@ -5,12 +5,13 @@
 #pragma once
 
 typedef struct {
-    float data[4][4];
+    float **data;
     unsigned int rows;
     unsigned int cols;
 } Matrix;
 
 Matrix *matrix(float data[4][4], unsigned int rows, unsigned int cols);
+void free_matrix(Matrix *m);
 Matrix *copy(const Matrix *src);
 Tuple *apply(Tuple *point, const Matrix *transform);
 bool mateq(const Matrix *m1, const Matrix *m2);
@@ -25,6 +26,15 @@ Matrix *inverse(const Matrix *m);
 
 Matrix *matrix(float data[4][4], unsigned int rows, unsigned int cols) {
     Matrix *m = (Matrix*)malloc(sizeof(Matrix));
+    if (m == NULL) {
+        perror("failed to allocate for new matrix");
+        exit(1);
+    }
+    m->data = (float**)malloc(sizeof(float*) * 4);
+    for (unsigned int i = 0; i < 4; i++) {
+        m->data[i] = (float*)malloc(sizeof(float) * 4);
+    }
+
     for (unsigned int i = 0; i < rows; i++) {
         for (unsigned int j = 0; j < cols; j++) {
             m->data[i][j] = data[i][j];
@@ -35,8 +45,18 @@ Matrix *matrix(float data[4][4], unsigned int rows, unsigned int cols) {
     return m;
 }
 
+void free_matrix(Matrix *m) {
+    for (unsigned int i = 0; i < 4; i++) {
+        free(m->data[i]);
+    }
+    free(m->data);
+    free(m);
+}
+
 Matrix *copy(const Matrix *src) {
-    Matrix *m = (Matrix*)malloc(sizeof(Matrix));
+    float data[4][4] = {{0,0,0,0}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}};
+    Matrix *m = matrix(data, 4, 4);
+
     for (unsigned int i = 0; i < src->rows; i++) {
         for (unsigned int j = 0; j < src->cols; j++) {
             m->data[i][j] = src->data[i][j];
@@ -157,7 +177,7 @@ float det(const Matrix *a) {
 float minor(const Matrix *a, unsigned int i, unsigned int j) {
     Matrix *sub = submatrix(a, i, j);
     float d = det(sub);
-    free(sub);
+    free_matrix(sub);
     return d;
 }
 

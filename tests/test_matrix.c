@@ -14,7 +14,7 @@ void Matrix2Construction() {
     Equal(mat->data[0][1], 5);
     Equal(mat->data[1][0], 1);
     Equal(mat->data[1][1], -2);
-    free(mat);
+    free_matrix(mat);
 }
 
 void Matrix3Construction() {
@@ -27,7 +27,7 @@ void Matrix3Construction() {
     Equal(mat->data[0][0], -3);
     Equal(mat->data[1][1], -2);
     Equal(mat->data[2][2], -1);
-    free(mat);
+    free_matrix(mat);
 }
 
 void Matrix4Construction() {
@@ -45,7 +45,7 @@ void Matrix4Construction() {
     Equal(mat->data[2][2], 11);
     Equal(mat->data[3][0], 13.5);
     Equal(mat->data[3][2], 15.5);
-    free(mat);
+    free_matrix(mat);
 }
 
 void Matrix4Eq() {
@@ -65,7 +65,7 @@ void Matrix4Eq() {
     Matrix *mat2 = matrix(data2, 4, 4);
     True(mateq(mat, mat));
     False(mateq(mat, mat2));
-    free(mat); free(mat2);
+    free_matrix(mat); free_matrix(mat2);
 }
 
 void MatrixMultiply() {
@@ -93,7 +93,7 @@ void MatrixMultiply() {
     Matrix *res = matmul(mat, mat2);
     True(mateq(res, exp));
 
-    free(mat); free(mat2); free(exp); free(res);
+    free_matrix(mat); free_matrix(mat2); free_matrix(exp); free_matrix(res);
 }
 
 void MatTupleMult() {
@@ -109,7 +109,7 @@ void MatTupleMult() {
 
     TupleEqual(apply(p, mat), exp);
 
-    free(mat); free(exp); free(p);
+    free_matrix(mat); free(exp); free(p);
 }
 
 void MatrixMultiplyI() {
@@ -124,7 +124,7 @@ void MatrixMultiplyI() {
     Matrix *res = matmul(mat, ident);
     True(mateq(mat, res));
 
-    free(mat); free(ident); free(res);
+    free_matrix(mat); free_matrix(ident); free_matrix(res);
 }
 
 void MatrixTranspose() {
@@ -150,7 +150,7 @@ void MatrixTranspose() {
     Matrix *icopy = copy(ident);
     True(mateq(transpose(ident), icopy));
 
-    free(mat); free(ident); free(icopy); free(mat_T);
+    free_matrix(mat); free_matrix(ident); free_matrix(icopy); free_matrix(mat_T);
 }
 
 void Submatrix() {
@@ -167,7 +167,7 @@ void Submatrix() {
     Matrix *res = matrix(data2, 2, 2);
     Matrix *sub = submatrix(mat, 0, 2);
     True(mateq(res, sub));
-    free(mat); free(sub); free(res);
+    free_matrix(mat); free_matrix(sub); free_matrix(res);
 }
 
 void Matrix2Determinate() {
@@ -177,7 +177,7 @@ void Matrix2Determinate() {
     };
     Matrix *mat = matrix(data, 2, 2);
     Equal(det(mat), 17);
-    free(mat);
+    free_matrix(mat);
 }
 
 void MatrixMinor() {
@@ -190,7 +190,7 @@ void MatrixMinor() {
     Matrix *b = submatrix(mat, 1, 0);
     Equal(det(b), 25);
     Equal(minor(mat, 1, 0), 25);
-    free(mat); free(b);
+    free_matrix(mat); free_matrix(b);
 }
 
 void MatrixCofactor() {
@@ -204,7 +204,7 @@ void MatrixCofactor() {
     Equal(cofactor(mat, 0, 0), -12);
     Equal(minor(mat, 1, 0), 25);
     Equal(cofactor(mat, 1, 0), -25);
-    free(mat);
+    free_matrix(mat);
 }
 
 void MatrixDeterminate() {
@@ -221,7 +221,7 @@ void MatrixDeterminate() {
     Equal(cofactor(mat, 0, 2), 210);
     Equal(cofactor(mat, 0, 3), 51);
     Equal(det(mat), -4071);
-    free(mat);
+    free_matrix(mat);
 }
 
 void MatrixInvertibility() {
@@ -243,7 +243,7 @@ void MatrixInvertibility() {
     True(det(mat) != 0);
     True(det(mat2) == 0);
     
-    free(mat); free(mat2);
+    free_matrix(mat); free_matrix(mat2);
 }
 
 void MatrixInverting() {
@@ -266,7 +266,7 @@ void MatrixInverting() {
 
     True(mateq(res, exp));
 
-    free(mat); free(res); free(exp);
+    free_matrix(mat); free_matrix(res); free_matrix(exp);
 }
 
 void MatrixInvertingAssociative() {
@@ -292,7 +292,7 @@ void MatrixInvertingAssociative() {
     Matrix *mmres = matmul(mat, res);
     True(mateq(mmres, ident));
 
-    free(mat); free(res); free(exp); free(ident); free(mmres);
+    free_matrix(mat); free_matrix(res); free_matrix(exp); free_matrix(ident); free_matrix(mmres);
 }
 
 void TestMatrixFeature() {

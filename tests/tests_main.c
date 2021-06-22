@@ -8,6 +8,8 @@
 #include "test_sphere.c"
 #include "test_lights.c"
 #include "test_materials.c"
+#include "test_world.c"
+#include "test_intersections.c"
 
 int main() {
   TestTupleFeature();
@@ -18,5 +20,7 @@ int main() {
   TestSphere();
   TestLightsFeature();
   TestMaterialsFeature();
+  TestWorldFeature();
+  TestIntersectionsFeature();
   return TestMain();
 }

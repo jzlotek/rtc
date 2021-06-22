@@ -1,11 +1,16 @@
 #include "tuple.h"
+#include "../utils/funcs.h"
 
 #pragma once
 
-typedef struct {
+typedef struct light {
     Tuple *intensity;
     Tuple *position;
 } Light;
+
+typedef Light* LightP;
+
+TEMPLATE_ARRAY(LightP);
 
 typedef struct {
     Tuple *color;
@@ -19,6 +24,7 @@ typedef struct {
 Light *point_light(Tuple *intensity, Tuple *position);
 void free_point_light(Light *light);
 Material *material();
+void set_color(Material *m, Tuple *color);
 void free_material(Material *m);
 Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv);
 
@@ -43,6 +49,11 @@ Material *material() {
     m->specular = 0.9;
     m->shininess = 200.0;
     return m;
+}
+
+void set_color(Material *m, Tuple *color) {
+    free(m->color);
+    m->color = color;
 }
 
 void free_material(Material *m) {

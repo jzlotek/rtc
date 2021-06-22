@@ -17,7 +17,7 @@ void PointMatrixMult() {
     apply(p, t_inv);
     TupleEqual(p, exp);
 
-    free(t); free(p); free(exp); free(t_inv);
+    free_matrix(t); free(p); free(exp); free_matrix(t_inv);
 }
 
 void VecMatrixMult() {
@@ -28,7 +28,7 @@ void VecMatrixMult() {
     apply(p, t);
     TupleEqual(p, exp);
 
-    free(t); free(p); free(exp); free(t_inv);
+    free_matrix(t); free(p); free(exp); free_matrix(t_inv);
 }
 
 void PointMatrixScale() {
@@ -38,7 +38,7 @@ void PointMatrixScale() {
     apply(p, t);
     TupleEqual(p, exp);
 
-    free(t); free(p); free(exp);
+    free_matrix(t); free(p); free(exp);
 }
 
 void PointRotateX() {
@@ -52,7 +52,7 @@ void PointRotateX() {
     exp = point(0,0,1);
     TupleEqual(apply(p, full_quarter), exp);
 
-    free(p); free(exp); free(half_quarter); free(full_quarter);
+    free(p); free(exp); free_matrix(half_quarter); free_matrix(full_quarter);
 }
 
 void PointRotateY() {
@@ -66,7 +66,7 @@ void PointRotateY() {
     exp = point(1, 0, 0);
     TupleEqual(apply(p, full_quarter), exp);
 
-    free(p); free(exp); free(half_quarter); free(full_quarter);
+    free(p); free(exp); free_matrix(half_quarter); free_matrix(full_quarter);
 }
 
 void PointRotateZ() {
@@ -80,13 +80,13 @@ void PointRotateZ() {
     exp = point(-1, 0, 0);
     TupleEqual(apply(p, full_quarter), exp);
 
-    free(p); free(exp); free(half_quarter); free(full_quarter);
+    free(p); free(exp); free_matrix(half_quarter); free_matrix(full_quarter);
 }
 
 void __ShearPointHelper(Tuple p, Tuple exp, float a, float b, float c, float d, float e, float f) {
     Matrix *t = shear(a,b,c,d,e,f);
     TupleEqual(apply(&p, t), &exp);
-    free(t);
+    free_matrix(t);
 }
 
 void ShearPoint() {
@@ -117,7 +117,7 @@ void TestChainMatMul() {
     Matrix *t = chain_matmul(3, rotation_x(M_PI_2), scaling(5, 5, 5), translation(10, 5, 7));
     apply(p, t);
     TupleEqual(p, exp);
-    free(p); free(exp); free(t);
+    free(p); free(exp); free_matrix(t);
 }
 
 void TestTransformsFeature() {

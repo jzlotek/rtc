@@ -14,12 +14,19 @@ typedef struct {
 
 TEMPLATE_ARRAY(Intersection);
 
+
 Sphere *sphere();
 void free_sphere(Sphere *sphere);
 void set_transform(Sphere *sphere, Matrix *m);
 void set_material(Sphere *sphere, Material *m);
 IntersectionArray *intersect(Sphere *sphere, const Ray *r);
-Intersection intersection(float t, Sphere *s);
+void clean_Intersection_array(IntersectionArray *ia);
+
+void clean_Intersection_array(IntersectionArray *ia) {
+    for (unsigned int i = 0; i < ia->length; i++) {
+        free(ia->data[i]);
+    }
+}
 
 Sphere *sphere() {
     Sphere *s = (Sphere*)malloc(sizeof(Sphere));
@@ -31,28 +38,26 @@ Sphere *sphere() {
 }
 
 void free_sphere(Sphere *sphere) {
-    if (sphere->material != NULL) {
-        free_material(sphere->material);
-    }
-    free(sphere->transform);
+    free_material(sphere->material);
+    free_matrix(sphere->transform);
     free(sphere->center);
     free(sphere);
 }
 
 void set_transform(Sphere *sphere, Matrix *m) {
-    if (sphere->transform != NULL) free(sphere->transform);
+    free_matrix(sphere->transform);
     sphere->transform = m;
 }
 
 void set_material(Sphere *sphere, Material *m) {
-    if (sphere->material != NULL) free_material(sphere->material);
+    free_material(sphere->material);
     sphere->material = m;
 }
 
 IntersectionArray *intersect(Sphere *sphere, const Ray *ra) {
     Matrix *t_inv = inverse(sphere->transform);
     Ray *r = transform(ra, t_inv);
-    free(t_inv);
+    free_matrix(t_inv);
     IntersectionArray *arr = Intersection_array();
     Tuple *oc = sub(copy_tuple(r->origin), sphere->center);
     float a = dot(r->direction, r->direction);
@@ -60,25 +65,22 @@ IntersectionArray *intersect(Sphere *sphere, const Ray *ra) {
     float c = dot(oc, oc) - sphere->radius * sphere->radius;
     float disc = (b * b) - (4 * a * c);
     if (disc >= 0) {
-        Intersection in = {(-b - sqrt(disc)) / 2.0 / a, sphere};
-        Intersection_arr_add(arr, in);
-        in.t = (-b + sqrt(disc)) / 2.0 / a;
-        Intersection_arr_add(arr, in);
+        Intersection_arr_add(arr, intersection((-b - sqrt(disc)) / 2.0 / a, sphere));
+        Intersection_arr_add(arr, intersection((-b + sqrt(disc)) / 2.0 / a, sphere));
     }
     free(oc);
     free_ray(r);
     return arr;
 }
 
-Intersection intersection(float t, Sphere *s) {
-    Intersection i = {t, s};
-    return i;
-}
-
 int __cmp_Intersection(const void *a, const void *b) {
-    Intersection *v1 = (Intersection*)a;
-    Intersection *v2 = (Intersection*)b;
-    return v1->t - v2->t;
+    float v1 = (*(Intersection*)a)->t;
+    float v2 = (*(Intersection*)b)->t;
+    if (v1 < v2)
+        return -1;
+    else if (v1 > v2) 
+        return 1;
+    return 0;
 }
 
 void sort_IntersectionArray(IntersectionArray *arr) {
@@ -86,12 +88,14 @@ void sort_IntersectionArray(IntersectionArray *arr) {
 }
 
 Intersection hit(IntersectionArray *arr) {
-    Intersection ret = {-1, NULL};
+    Intersection ret = intersection(-1, NULL);
     sort_IntersectionArray(arr);
     for (unsigned int i = 0; i < arr->length; i++) {
         Intersection v = get_Intersection_array(arr, i);
-        if (v.t >= 0 && ret.solid == NULL) {
-            return v;
+        if (v->t >= 0) {
+            ret->t = v->t;
+            ret->solid = v->solid;
+            return ret;
         }
     }
     return ret;
@@ -104,6 +108,6 @@ Tuple *normal_at(const Sphere *s, const Tuple *pos) {
     Tuple *world_normal = apply(world_point, transpose(transform_inv));
     world_normal->w = 0;
 
-    free(transform_inv);
+    free_matrix(transform_inv);
     return norm(world_normal);
 }

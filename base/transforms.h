@@ -79,7 +79,7 @@ Matrix *chain_matmul(int count, ...) {
         tmp = acc;
         Matrix *next = va_arg(va, Matrix*);
         acc = matmul(next, tmp);
-        free(tmp); free(next);
+        free_matrix(tmp); free_matrix(next);
     }
 
     va_end(va);
