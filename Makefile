@@ -1,4 +1,4 @@
-.PHONY: test cannon clock sphere phong render
+.PHONY: test cannon clock sphere phong render plane
 
 CC=gcc
 CFLAGS=-O2 -g -lm
@@ -29,3 +29,7 @@ phong: demos/phong.c
 render: demos/render.c
 	$(CC) $(CFLAGS) $^ -o $@
 	./$@ | pnmtopng > render.png
+
+plane: demos/plane.c
+	$(CC) $(CFLAGS) $^ -o $@
+	./$@ | pnmtopng > plane.png
