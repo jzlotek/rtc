@@ -16,61 +16,61 @@ void TestPosition() {
   free(exp); free(res); free_ray(r);
 }
 
-void TestSphereIntersection() {
+void TestSolidIntersection() {
   Ray *r = ray(0, 0, -5, 0, 0, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
   IntersectionArray *points = intersect(s, r);
   if (Equal(points->length, 2)) {
     Equal(get_Intersection_array(points, 0)->t, 4);
     Equal(get_Intersection_array(points, 1)->t, 6);
   }
-  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_sphere(s);
+  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_solid(s);
 }
 
-void TestSphereIntersectionTangent() {
+void TestSolidIntersectionTangent() {
   Ray *r = ray(0, 1, -5, 0, 0, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
   IntersectionArray *points = intersect(s, r);
   if (Equal(points->length, 2)) {
     Equal(get_Intersection_array(points, 0)->t, 5);
     Equal(get_Intersection_array(points, 1)->t, 5);
   }
-  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_sphere(s);
+  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_solid(s);
 }
 
-void TestSphereIntersectionMisses() {
+void TestSolidIntersectionMisses() {
   Ray *r = ray(0, 2, -5, 0, 0, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
   IntersectionArray *points = intersect(s, r);
   Equal(points->length, 0);
-  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_sphere(s);
+  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_solid(s);
 }
 
-void TestSphereIntersectionInside() {
+void TestSolidIntersectionInside() {
   Ray *r = ray(0, 0, 0, 0, 0, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
   IntersectionArray *points = intersect(s, r);
   if (Equal(points->length, 2)) {
     Equal(get_Intersection_array(points, 0)->t, -1);
     Equal(get_Intersection_array(points, 1)->t, 1);
   }
-  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_sphere(s);
+  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_solid(s);
 }
 
-void TestSphereIntersectionOutside() {
+void TestSolidIntersectionOutside() {
   Ray *r = ray(0, 0, 5, 0, 0, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
   IntersectionArray *points = intersect(s, r);
   if (Equal(points->length, 2)) {
     Equal(get_Intersection_array(points, 0)->t, -6);
     Equal(get_Intersection_array(points, 1)->t, -4);
   }
-  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_sphere(s);
+  clean_Intersection_array(points); free_ray(r); free_Intersection_array(points); free_solid(s);
 }
 
 void TestRayIntersections() {
   IntersectionArray *intersections = Intersection_array();
-  Sphere *s = sphere();
+  Solid *s = sphere();
   Intersection_arr_add(intersections, intersection(1, s));
   Intersection_arr_add(intersections, intersection(2, s));
   Equal(intersections->length, 2);
@@ -78,12 +78,12 @@ void TestRayIntersections() {
   Equal(get_Intersection_array(intersections, 1)->t, 2);
   Equal(*(float*)get_Intersection_array(intersections, 0)->solid, *(float*)get_Intersection_array(intersections, 1)->solid);
 
-  clean_Intersection_array(intersections); free_Intersection_array(intersections); free_sphere(s);
+  clean_Intersection_array(intersections); free_Intersection_array(intersections); free_solid(s);
 }
 
 void TestRayHit() {
   IntersectionArray *intersections = Intersection_array();
-  Sphere *s = sphere();
+  Solid *s = sphere();
   Intersection v1 = intersection(1, s);
   Intersection v2 = intersection(2, s);
   Intersection_arr_add(intersections, v1);
@@ -93,12 +93,12 @@ void TestRayHit() {
   Equal(h->t, v1->t);
   Equal(*(float*)h->solid, *(float*)v1->solid);
 
-  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_sphere(s);
+  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_solid(s);
 }
 
 void TestRayHitOneNegative() {
   IntersectionArray *intersections = Intersection_array();
-  Sphere *s = sphere();
+  Solid *s = sphere();
   Intersection v1 = intersection(-1, s);
   Intersection v2 = intersection(1, s);
   Intersection_arr_add(intersections, v1);
@@ -108,12 +108,12 @@ void TestRayHitOneNegative() {
   Equal(h->t, v2->t);
   True(h->solid == v2->solid);
 
-  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_sphere(s);
+  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_solid(s);
 }
 
 void TestRayHitAllNegative() {
   IntersectionArray *intersections = Intersection_array();
-  Sphere *s = sphere();
+  Solid *s = sphere();
   Intersection v1 = intersection(-1, s);
   Intersection v2 = intersection(-2, s);
   Intersection_arr_add(intersections, v1);
@@ -122,12 +122,12 @@ void TestRayHitAllNegative() {
 
   True(h->solid == NULL);
 
-  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_sphere(s);
+  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_solid(s);
 }
 
 void TestRayHitOutOfOrder() {
   IntersectionArray *intersections = Intersection_array();
-  Sphere *s = sphere();
+  Solid *s = sphere();
   Intersection v1 = intersection(5, s);
   Intersection v2 = intersection(7, s);
   Intersection v3 = intersection(-3, s);
@@ -141,7 +141,7 @@ void TestRayHitOutOfOrder() {
   True(h->solid == s);
   Equal(h->t, 2);
 
-  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_sphere(s);
+  free(h); clean_Intersection_array(intersections); free_Intersection_array(intersections); free_solid(s);
 }
 
 void TestRayTranslation() {
@@ -173,11 +173,11 @@ void TestRayScaling() {
 void TestRay() {
   Feature f = {"Rays"};
   AddTest(&f, TestPosition, "Computing a point from a distance");
-  AddTest(&f, TestSphereIntersection, "A ray intersects a sphere at two points");
-  AddTest(&f, TestSphereIntersectionTangent, "A ray intersects a sphere at one point");
-  AddTest(&f, TestSphereIntersectionMisses, "A ray misses a sphere");
-  AddTest(&f, TestSphereIntersectionInside, "A ray originates inside a sphere");
-  AddTest(&f, TestSphereIntersectionOutside, "A ray intersects a sphere at one point");
+  AddTest(&f, TestSolidIntersection, "A ray intersects a sphere at two points");
+  AddTest(&f, TestSolidIntersectionTangent, "A ray intersects a sphere at one point");
+  AddTest(&f, TestSolidIntersectionMisses, "A ray misses a sphere");
+  AddTest(&f, TestSolidIntersectionInside, "A ray originates inside a sphere");
+  AddTest(&f, TestSolidIntersectionOutside, "A ray intersects a sphere at one point");
   AddTest(&f, TestRayIntersections, "Aggregating intersections");
   AddTest(&f, TestRayHit, "The hit, when all intersections have positive t");
   AddTest(&f, TestRayHitOneNegative, "The hit, when some intersections have negative t");

@@ -27,7 +27,7 @@ Material *material();
 Material *copy_material(const Material *m);
 void set_color(Material *m, Tuple *color);
 void free_material(Material *m);
-Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv);
+Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv, bool in_shadow);
 
 Light *point_light(Tuple *intensity, Tuple *position) {
     Light *l = (Light*)malloc(sizeof(Light));
@@ -72,10 +72,15 @@ void free_material(Material *m) {
     free(m);
 }
 
-Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv) {
+Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv, bool in_shadow) {
     Tuple *effective_color = prod(copy_tuple(m->color), l->intensity);
     Tuple *lightv = norm(sub(copy_tuple(l->position), point));
     Tuple *ambient = mult(copy_tuple(effective_color), m->ambient);
+
+    if (in_shadow) {
+        free(effective_color); free(lightv);
+        return ambient;
+    }
 
     Tuple *diffuse = vec(0, 0, 0);
     Tuple *specular = vec(0, 0, 0);

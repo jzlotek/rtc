@@ -6,7 +6,7 @@
 int main(void) {
   Canvas *c = canvas(512, 512);
   Tuple *white = vec(1, 1, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
   Tuple color = {1, 0.2, 1};
   copy_from(s->material->color, &color);
 
@@ -32,11 +32,11 @@ int main(void) {
         IntersectionArray *arr = intersect(s, r);
         Intersection h = hit(arr);
 
-        if (h.solid != NULL)  {
-            Tuple *point = position(r, h.t);
-            Tuple *n = normal_at((Sphere*)h.solid, point);
+        if (h->solid != NULL)  {
+            Tuple *point = position(r, h->t);
+            Tuple *n = normal_at(h->solid, point);
             Tuple *eye = mult(r->direction, -1);
-            Tuple *col = lighting(((Sphere*)h.solid)->material, light, point, eye, n);
+            Tuple *col = lighting(h->solid->material, light, point, eye, n, false);
             write_pixel(c, i, j, col);
             free(point); free(n); free(col);
         }
@@ -48,7 +48,7 @@ int main(void) {
 
   canvas_to_ppm(c, stdout);
   free_canvas(c);
-  free_sphere(s);
+  free_solid(s);
   free(white);
   return 0;
 }

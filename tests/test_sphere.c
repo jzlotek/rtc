@@ -4,46 +4,46 @@
 
 
 void TestSphereDefault() {
-    Sphere *s = sphere();
+    Solid *s = sphere();
     Matrix *ident = I();
     True(mateq(s->transform, ident));
 
-    free_matrix(ident); free_sphere(s);
+    free_matrix(ident); free_solid(s);
 }
 
 void TestSphereTransform() {
-    Sphere *s = sphere();
+    Solid *s = sphere();
     Matrix *exp = translation(2, 3, 4);
     set_transform(s, translation(2, 3, 4));
     True(mateq(s->transform, exp));
 
-    free_sphere(s); free_matrix(exp);
+    free_solid(s); free_matrix(exp);
 }
 
 void TestSphereIntersect() {
     Ray *r = ray(0, 0, -5, 0, 0, 1);
-    Sphere *s = sphere();
+    Solid *s = sphere();
     set_transform(s, scaling(2, 2, 2));
     IntersectionArray *arr = intersect(s, r);
     if (Equal(arr->length, 2)) {
         Equal(get_Intersection_array(arr, 0)->t, 3);
         Equal(get_Intersection_array(arr, 1)->t, 7);
     }
-    clean_Intersection_array(arr); free_ray(r); free_Intersection_array(arr); free_sphere(s);
+    clean_Intersection_array(arr); free_ray(r); free_Intersection_array(arr); free_solid(s);
 }
 
 void TestSphereIntersectMiss() {
     Ray *r = ray(0, 0, -5, 0, 0, 1);
-    Sphere *s = sphere();
+    Solid *s = sphere();
     set_transform(s, translation(5, 0, 0));
     IntersectionArray *arr = intersect(s, r);
     Equal(arr->length, 0);
 
-    clean_Intersection_array(arr); free_ray(r); free_Intersection_array(arr); free_sphere(s);
+    clean_Intersection_array(arr); free_ray(r); free_Intersection_array(arr); free_solid(s);
 }
 
 void TestSphereNormals() {
-    Sphere *s = sphere();
+    Solid *s = sphere();
 
     Tuple norms[4] = {
         {1, 0, 0, 1},
@@ -65,11 +65,11 @@ void TestSphereNormals() {
         free(res);
     }
 
-    free_sphere(s);
+    free_solid(s);
 }
 
 void TestSphereNormalsTranslate() {
-    Sphere *s = sphere();
+    Solid *s = sphere();
     set_transform(s, translation(0, 1, 0));
 
     Tuple *p = point(0, 1.70711, -0.70711);
@@ -78,11 +78,11 @@ void TestSphereNormalsTranslate() {
 
     TupleEqual(res, exp);
     Equal(magnitude(res), 1);
-    free(res); free_sphere(s); free(p); free(exp);
+    free(res); free_solid(s); free(p); free(exp);
 }
 
 void TestSphereNormalsScaleRot() {
-    Sphere *s = sphere();
+    Solid *s = sphere();
     set_transform(s, chain_matmul(2,
         rotation_z(M_PI / 5),
         scaling(1.0, 0.5, 1.0)
@@ -93,11 +93,11 @@ void TestSphereNormalsScaleRot() {
     Tuple *exp = vec(0, 0.97014, -0.24254);
 
     TupleEqual(res, exp);
-    free(res); free_sphere(s); free(p); free(exp);
+    free(res); free_solid(s); free(p); free(exp);
 }
 
 void TestSphereMaterialDefault() {
-    Sphere *s = sphere();
+    Solid *s = sphere();
     Material *m = material();
     m->ambient = 1.0;
     set_material(s, m);
@@ -105,7 +105,7 @@ void TestSphereMaterialDefault() {
     Equal(s->material->diffuse, 0.9);
     Equal(s->material->specular, 0.9);
     Equal(s->material->shininess, 200.0);
-    free_sphere(s);
+    free_solid(s);
 }
 
 void  TestSphere() {

@@ -3,14 +3,14 @@
 #include "../scene/world.h"
 
 int main(void) {
-  Sphere *floor = sphere();
+  Solid *floor = sphere();
   set_transform(floor, scaling(10, 0.01, 10));
   Material *m = material();
   m->specular = 0;
   set_color(m, vec(1, 0.9, 0.9));
   set_material(floor, m);
 
-  Sphere *left_wall = sphere();
+  Solid *left_wall = sphere();
   set_transform(left_wall, chain_matmul(4,
     scaling(10, 0.01, 10),
     rotation_x(M_PI/2),
@@ -19,7 +19,7 @@ int main(void) {
   ));
   set_material(left_wall, copy_material(m));
 
-  Sphere *right_wall = sphere();
+  Solid *right_wall = sphere();
   set_transform(right_wall, chain_matmul(4,
     scaling(10, 0.01, 10),
     rotation_x(M_PI/2),
@@ -28,7 +28,7 @@ int main(void) {
   ));
   set_material(right_wall, copy_material(m));
 
-  Sphere *middle = sphere();
+  Solid *middle = sphere();
   set_transform(middle, translation(-0.5, 1, 0.5));
   m = material();
   set_color(m, vec(0.1, 1, 0.5));
@@ -36,7 +36,7 @@ int main(void) {
   m->specular = 0.3;
   set_material(middle, m);
 
-  Sphere *right = sphere();
+  Solid *right = sphere();
   set_transform(right, chain_matmul(2, scaling(0.5, 0.5, 0.5), translation(1.5, 0.5, -0.5)));
   m = material();
   set_color(m, vec(0.5, 1, 0.1));
@@ -44,7 +44,7 @@ int main(void) {
   m->specular = 0.3;
   set_material(right, m);
 
-  Sphere *left = sphere();
+  Solid *left = sphere();
   set_transform(left, chain_matmul(2, scaling(0.33, 0.33, 0.33), translation(-1.5, 0.33, -0.75)));
   m = material();
   set_color(m, vec(1, 0.8, 0.1));
@@ -53,19 +53,19 @@ int main(void) {
   set_material(left, m);
 
   Camera *cam = set_camera_transform(
-    camera(500, 250, M_PI/3),
+    camera(1000, 500, M_PI/3),
     view_transform(point(0, 1.5, -5), point(0, 1, 0), vec(0, 1, 0))
   );
 
 
   World *w = world();
-  LightP_arr_add(w->lights, point_light(vec(1,1,1), point(-10, 10, -10)));
-  add_object(w, object(SPHERE, left, (void(*)(void*))free_sphere));
-  add_object(w, object(SPHERE, middle, (void(*)(void*))free_sphere));
-  add_object(w, object(SPHERE, right, (void(*)(void*))free_sphere));
-  add_object(w, object(SPHERE, floor, (void(*)(void*))free_sphere));
-  add_object(w, object(SPHERE, left_wall, (void(*)(void*))free_sphere));
-  add_object(w, object(SPHERE, right_wall, (void(*)(void*))free_sphere));
+  add_light(w, point_light(vec(1,1,1), point(-10, 10, -10)));
+  add_object(w, left);
+  add_object(w, middle);
+  add_object(w, right);
+  add_object(w, floor);
+  add_object(w, left_wall);
+  add_object(w, right_wall);
 
   Canvas *c = render(cam, w);
   canvas_to_ppm(c, stdout);

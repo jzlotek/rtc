@@ -11,6 +11,7 @@
 #include "test_world.c"
 #include "test_intersections.c"
 #include "test_camera.c"
+#include "test_solid.c"
 
 int main() {
   TestTupleFeature();
@@ -24,5 +25,6 @@ int main() {
   TestWorldFeature();
   TestIntersectionsFeature();
   TestCameraFeature();
+  TestSolidFeature();
   return TestMain();
 }

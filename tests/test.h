@@ -8,6 +8,7 @@
 
 #pragma once
 
+const int RTC_BUFLEN = 256;
 typedef struct {
     void (*func)();
     char *description;
@@ -23,8 +24,6 @@ typedef struct {
 TEMPLATE_ARRAY(Feature);
 
 static FeatureArray *features = NULL;
-static int rtc_features_length;
-static int rtc_tests_passed;
 
 void AddFeature(Feature f) {
     if (features == NULL) {
@@ -41,11 +40,11 @@ void AddTest(Feature *f, void (*func)(), char *desc) {
     Test_arr_add(f->tests, test);
 }
 
-static int rtc_statements_failed;
-static char *rtc_statements[512];
+static StringArray *rtc_statements;
 
 int RunTests() {
     int total_tests_run = 0;
+    int rtc_tests_passed = 0;
     printf("RTC Tests\n");
 
     for (unsigned int f = 0; f < features->length; f++) {
@@ -53,19 +52,21 @@ int RunTests() {
         printf("\tFeature: %s\n", feature.description);
         total_tests_run += feature.tests->length;
         for (unsigned int i = 0; i < feature.tests->length; i++) {
+            rtc_statements = String_array();
             Test t = get_Test_array(feature.tests, i);
-            rtc_statements_failed = 0;
             printf("\t\tTest: %s ", t.description);
             t.func();
-            if (rtc_statements_failed == 0) {
+            if (rtc_statements->length == 0) {
                 printf("%s\n", "✔️");
                 rtc_tests_passed++;
             } else {
                 printf("%s\n", "❌");
             }
-            for (unsigned int j = 0; j < rtc_statements_failed; j++) {
-                printf(rtc_statements[j]);
+            for (unsigned int j = 0; j < rtc_statements->length; j++) {
+                printf(get_String_array(rtc_statements, j));
             }
+            clean_String_array(rtc_statements);
+            free_String_array(rtc_statements);
         }
     }
     printf("Total: %d | %d ✔️ | %d ❌\n", total_tests_run, rtc_tests_passed, total_tests_run - rtc_tests_passed);
@@ -84,11 +85,10 @@ int TestMain() {
 bool TupleEqual(Tuple *t1, Tuple *t2) {
     bool result = equal(t1, t2);
     if (!result) {
-        char buf[512];
-        sprintf(buf, "\t\t\t{%.6f, %.6f, %.6f, %.6f} == {%.6f, %.6f, %.6f, %.6f}\n",
+        char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN * 2);
+        sprintf(buf, "\t\t\t Got: {%.6f, %.6f, %.6f, %.6f}, Expected: {%.6f, %.6f, %.6f, %.6f}\n",
                 t1->x, t1->y, t1->z, t1->w, t2->x, t2->y, t2->z, t2->w);
-        rtc_statements[rtc_statements_failed] = buf;
-        rtc_statements_failed++;
+        String_arr_add(rtc_statements, buf);
     }
     return result;
 }
@@ -96,10 +96,9 @@ bool TupleEqual(Tuple *t1, Tuple *t2) {
 bool Equal(float a, float b) {
     bool result = fabs(a - b) < EPSILON;
     if (!result) {
-        char buf[512];
+        char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN);
         sprintf(buf, "\t\t\t%.10f == %.10f\n", a, b);
-        rtc_statements[rtc_statements_failed] = buf;
-        rtc_statements_failed++;
+        String_arr_add(rtc_statements, buf);
     }
     return result;
 }
@@ -107,10 +106,9 @@ bool Equal(float a, float b) {
 bool LT(float a, float b) {
     bool result = a < b;
     if (!result) {
-        char buf[256];
+        char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN);
         sprintf(buf, "\t\t\t%.10f < %.10f\n", a, b);
-        rtc_statements[rtc_statements_failed] = buf;
-        rtc_statements_failed++;
+        String_arr_add(rtc_statements, buf);
     }
     return result;
 }
@@ -118,30 +116,27 @@ bool LT(float a, float b) {
 bool GT(float a, float b) {
     bool result = a > b;
     if (!result) {
-        char buf[256];
+        char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN);
         sprintf(buf, "\t\t\t%.10f > %.10f\n", a, b);
-        rtc_statements[rtc_statements_failed] = buf;
-        rtc_statements_failed++;
+        String_arr_add(rtc_statements, buf);
     }
     return result;
 }
 
 bool True(bool a) {
     if (!a) {
-        char buf[256];
+        char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN);
         sprintf(buf, "\t\t\tfalse\n");
-        rtc_statements[rtc_statements_failed] = buf;
-        rtc_statements_failed++;
+        String_arr_add(rtc_statements, buf);
     }
     return a;
 }
 
 bool False(bool a) {
     if (a) {
-        char buf[256];
+        char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN);
         sprintf(buf, "\t\t\ttrue\n");
-        rtc_statements[rtc_statements_failed] = buf;
-        rtc_statements_failed++;
+        String_arr_add(rtc_statements, buf);
     }
     return !a;
 }

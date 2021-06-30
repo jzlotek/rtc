@@ -6,7 +6,7 @@
 int main(void) {
   Canvas *c = canvas(100, 100);
   Tuple *white = vec(1, 1, 1);
-  Sphere *s = sphere();
+  Solid *s = sphere();
 
   int HALF_H = c->height / 2;
   int HALF_W = c->width / 2;
@@ -25,7 +25,7 @@ int main(void) {
         IntersectionArray *arr = intersect(s, r);
         Intersection h = hit(arr);
 
-        if (h.solid != NULL) 
+        if (h->solid != NULL) 
             write_pixel(c, i, j, white);
 
         free_ray(r); free_Intersection_array(arr); free(w_pos);
@@ -35,7 +35,7 @@ int main(void) {
 
   canvas_to_ppm(c, stdout);
   free_canvas(c);
-  free_sphere(s);
+  free_solid(s);
   free(white);
   return 0;
 }

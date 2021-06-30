@@ -10,15 +10,7 @@ typedef struct {
     Tuple *direction;
 } Ray;
 
-typedef struct {
-    float t;
-    void *solid;
-} __intersection;
-
-typedef __intersection* Intersection;
-
 Ray *ray(float start_x, float start_y, float start_z, float d_x, float d_y, float d_z);
-Intersection intersection(float t, void *solid);
 Ray *copy_ray(const Ray *src);
 void free_ray(Ray *r);
 Tuple *position(Ray *r, float t);
@@ -29,13 +21,6 @@ Ray *ray(float start_x, float start_y, float start_z, float d_x, float d_y, floa
     r->origin = point(start_x, start_y, start_z);
     r->direction = vec(d_x, d_y, d_z);
     return r;
-}
-
-Intersection intersection(float t, void *solid) {
-    Intersection i = (Intersection)malloc(sizeof(__intersection));
-    i->solid = solid;
-    i->t = t;
-    return i;
 }
 
 Ray *copy_ray(const Ray *src) {

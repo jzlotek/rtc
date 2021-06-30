@@ -41,3 +41,9 @@ void TYPE##_arr_add(TYPE##Array *arr, TYPE v) {\
 TEMPLATE_ARRAY(int);
 TEMPLATE_ARRAY(float);
 TEMPLATE_ARRAY(String);
+
+void clean_String_array(StringArray *a) {
+    for (unsigned int i = 0; i < a->length; i++) {
+        free(a->data[i]);
+    }
+}
