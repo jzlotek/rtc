@@ -1,4 +1,5 @@
 #include "tuple.h"
+#include "pattern.h"
 #include "../utils/funcs.h"
 
 #pragma once
@@ -18,6 +19,7 @@ typedef struct {
     float diffuse;
     float specular;
     float shininess;
+    Pattern *pattern;
 } Material;
 
 
@@ -49,6 +51,7 @@ Material *material() {
     m->diffuse = 0.9;
     m->specular = 0.9;
     m->shininess = 200.0;
+    m->pattern = NULL;
     return m;
 }
 
@@ -68,12 +71,21 @@ void set_color(Material *m, Tuple *color) {
 }
 
 void free_material(Material *m) {
+    if (m->pattern != NULL) {
+        free_pattern(m->pattern);
+    }
     free(m->color);
     free(m);
 }
 
 Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv, bool in_shadow) {
-    Tuple *effective_color = prod(copy_tuple(m->color), l->intensity);
+    Tuple *color;
+    if (m->pattern == NULL) {
+        color = m->color;
+    } else {
+        color = stripe_at(m->pattern, point);
+    }
+    Tuple *effective_color = prod(copy_tuple(color), l->intensity);
     Tuple *lightv = norm(sub(copy_tuple(l->position), point));
     Tuple *ambient = mult(copy_tuple(effective_color), m->ambient);
 

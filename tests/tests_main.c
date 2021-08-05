@@ -13,6 +13,7 @@
 #include "test_camera.c"
 #include "test_solid.c"
 #include "test_plane.c"
+#include "test_patterns.c"
 
 int main() {
   TestTupleFeature();
@@ -28,5 +29,6 @@ int main() {
   TestCameraFeature();
   TestSolidFeature();
   TestPlaneFeature();
+  TestPatternsFeature();
   return TestMain();
 }
