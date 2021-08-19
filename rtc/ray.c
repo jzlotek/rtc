@@ -1,20 +1,4 @@
-#include "tuple.h"
-#include "matrix.h"
-#include "../utils/consts.h"
-#include "../utils/funcs.h"
-
-#pragma once
-
-typedef struct {
-    Tuple *origin;
-    Tuple *direction;
-} Ray;
-
-Ray *ray(float start_x, float start_y, float start_z, float d_x, float d_y, float d_z);
-Ray *copy_ray(const Ray *src);
-void free_ray(Ray *r);
-Tuple *position(Ray *r, float t);
-Ray *transform(const Ray *r, const Matrix *m);
+#include "../rtc.h"
 
 Ray *ray(float start_x, float start_y, float start_z, float d_x, float d_y, float d_z) {
     Ray *r = (Ray*)malloc(sizeof(Ray));

@@ -1,5 +1,4 @@
-#include "../scene/world.h"
-#include "../utils/consts.h"
+#include "../rtc.h"
 
 #include "test.h"
 
@@ -42,8 +41,8 @@ void TestIntersectionHitOffset() {
   set_transform(s, translation(0,0,1));
   Intersection i = intersection(5, s);
   WorldComputation *comps = prepare_computations(i, r);
-  True(comps->over_point->z < -EPSILON/2);
-  True(comps->point->z > comps->over_point->z);
+  True(comps->over_point->vals[2] < -EPSILON/2);
+  True(comps->point->vals[2] > comps->over_point->vals[2]);
   free_ray(r); free(i); free_solid(s); free_world_computation(comps);
 }
 

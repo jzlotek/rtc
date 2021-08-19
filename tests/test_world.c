@@ -1,7 +1,4 @@
-#include "../scene/world.h"
-#include "../utils/consts.h"
-#include "../base/light.h"
-#include "../solids/sphere.h"
+#include "../rtc.h"
 #include "test.h"
 
 void TestWorldInitEmpty() {

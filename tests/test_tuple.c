@@ -1,44 +1,43 @@
 #include <math.h>
-#include "../base/tuple.h"
-#include "../utils/consts.h"
+#include "../rtc.h"
 #include "test.h"
 
 void TestPoint() {
   Tuple t = {4.3, -4.2, 3.1, 1.0};
-  Equal(t.x, 4.3);
-  Equal(t.y, -4.2);
-  Equal(t.z, 3.1);
-  Equal(t.w, 1.0);
+  Equal(t.vals[0], 4.3);
+  Equal(t.vals[1], -4.2);
+  Equal(t.vals[2], 3.1);
+  Equal(t.vals[3], 1.0);
   True(isPoint(&t));
   False(isVector(&t));
 }
 
 void TestVector() {
   Tuple t = {4.3, -4.2, 3.1, 0.0};
-  Equal(t.x, 4.3);
-  Equal(t.y, -4.2);
-  Equal(t.z, 3.1);
-  Equal(t.w, 0.0);
+  Equal(t.vals[0], 4.3);
+  Equal(t.vals[1], -4.2);
+  Equal(t.vals[2], 3.1);
+  Equal(t.vals[3], 0.0);
   False(isPoint(&t));
   True(isVector(&t));
 }
 
 void TestPointFactory() {
   Tuple *t = point(4, -4, 3);
-  Equal(t->x, 4);
-  Equal(t->y, -4);
-  Equal(t->z, 3);
-  Equal(t->w, 1);
+  Equal(t->vals[0], 4);
+  Equal(t->vals[1], -4);
+  Equal(t->vals[2], 3);
+  Equal(t->vals[3], 1);
   True(isPoint(t));
   False(isVector(t));
 }
 
 void TestVectorFactory() {
   Tuple *t = vec(4, -4, 3);
-  Equal(t->x, 4);
-  Equal(t->y, -4);
-  Equal(t->z, 3);
-  Equal(t->w, 0);
+  Equal(t->vals[0], 4);
+  Equal(t->vals[1], -4);
+  Equal(t->vals[2], 3);
+  Equal(t->vals[3], 0);
   False(isPoint(t));
   True(isVector(t));
 }
@@ -47,19 +46,19 @@ void TestTupleAdd() {
   Tuple *t1 = point(3, -2, 5);
   Tuple *t2 = vec(-2, 3, 1);
   add(t1, t2);
-  Equal(t1->x, 1);
-  Equal(t1->y, 1);
-  Equal(t1->z, 6);
-  Equal(t1->w, 1);
+  Equal(t1->vals[0], 1);
+  Equal(t1->vals[1], 1);
+  Equal(t1->vals[2], 6);
+  Equal(t1->vals[3], 1);
 }
 
 void TestPointSub() {
   Tuple *t1 = point(3, 2, 1);
   Tuple *t2 = point(5, 6, 7);
   sub(t1, t2);
-  Equal(t1->x, -2);
-  Equal(t1->y, -4);
-  Equal(t1->z, -6);
+  Equal(t1->vals[0], -2);
+  Equal(t1->vals[1], -4);
+  Equal(t1->vals[2], -6);
   True(isVector(t1));
 }
 
@@ -67,9 +66,9 @@ void TestTupleSub() {
   Tuple *t1 = point(3, 2, 1);
   Tuple *t2 = vec(5, 6, 7);
   sub(t1, t2);
-  Equal(t1->x, -2);
-  Equal(t1->y, -4);
-  Equal(t1->z, -6);
+  Equal(t1->vals[0], -2);
+  Equal(t1->vals[1], -4);
+  Equal(t1->vals[2], -6);
   True(isPoint(t1));
 }
 
@@ -77,9 +76,9 @@ void TestVectorSub() {
   Tuple *t1 = vec(3, 2, 1);
   Tuple *t2 = vec(5, 6, 7);
   sub(t1, t2);
-  Equal(t1->x, -2);
-  Equal(t1->y, -4);
-  Equal(t1->z, -6);
+  Equal(t1->vals[0], -2);
+  Equal(t1->vals[1], -4);
+  Equal(t1->vals[2], -6);
   True(isVector(t1));
 }
 
@@ -87,9 +86,9 @@ void TestZeroSub() {
   Tuple *t1 = vec(0, 0, 0);
   Tuple *t2 = vec(1, -2, 3);
   sub(t1, t2);
-  Equal(t1->x, -1);
-  Equal(t1->y, 2);
-  Equal(t1->z, -3);
+  Equal(t1->vals[0], -1);
+  Equal(t1->vals[1], 2);
+  Equal(t1->vals[2], -3);
   True(isVector(t1));
 }
 
@@ -186,7 +185,7 @@ void TestCannon() {
   env_wind = vec(-0.01, 0, 0);
 
   int i = 0;
-  while (p_pos->y > 0) {
+  while (p_pos->vals[1] > 0) {
     __tick(p_pos, p_vel, env_g, env_wind);
     i++;
   }

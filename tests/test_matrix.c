@@ -1,5 +1,4 @@
-#include "../base/matrix.h"
-#include "../utils/consts.h"
+#include "../rtc.h"
 #include "test.h"
 
 #pragma once
@@ -242,7 +241,7 @@ void MatrixInvertibility() {
 
     True(det(mat) != 0);
     True(det(mat2) == 0);
-    
+
     free_matrix(mat); free_matrix(mat2);
 }
 

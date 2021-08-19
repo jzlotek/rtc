@@ -1,7 +1,4 @@
-#include <math.h>
-#include "../base/canvas.h"
-#include "../base/transforms.h"
-#include "../solids/sphere.h"
+#include "../rtc.h"
 
 int main(void) {
   Canvas *c = canvas(512, 512);
@@ -28,7 +25,14 @@ int main(void) {
     for (int j = 0; j < c->height; j++) {
         Tuple *w_pos = point(-half + pixel_size * i, half - pixel_size * j, wall_z);
         norm(sub(w_pos, r_origin));
-        Ray *r = ray(r_origin->x, r_origin->y, r_origin->z, w_pos->x, w_pos->y, w_pos->z);
+        Ray *r = ray(
+            r_origin->vals[0],
+            r_origin->vals[1],
+            r_origin->vals[2],
+            w_pos->vals[0],
+            w_pos->vals[1],
+            w_pos->vals[2]
+        );
         IntersectionArray *arr = intersect(s, r);
         Intersection h = hit(arr);
 
@@ -36,7 +40,7 @@ int main(void) {
             Tuple *point = position(r, h->t);
             Tuple *n = normal_at(h->solid, point);
             Tuple *eye = mult(r->direction, -1);
-            Tuple *col = lighting(h->solid->material, light, point, eye, n, false);
+            Tuple *col = lighting(h->solid->material, sphere(), light, point, eye, n, false);
             write_pixel(c, i, j, col);
             free(point); free(n); free(col);
         }

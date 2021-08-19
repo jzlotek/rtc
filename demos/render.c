@@ -1,6 +1,5 @@
 #include <math.h>
-#include "../scene/camera.h"
-#include "../scene/world.h"
+#include "../rtc.h"
 
 int main(void) {
   Solid *floor = sphere();

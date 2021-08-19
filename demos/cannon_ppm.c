@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../base/canvas.h"
+#include "../rtc.h"
 
 void tick(Tuple *p_pos, Tuple *p_vel, Tuple *env_g, Tuple *env_wind) {
   add(p_pos, p_vel);
@@ -17,10 +17,10 @@ int main(void) {
   Tuple *wind = vec(-0.01, 0.0, 0.0);
 
 
-  write_pixel(c, start->x, c->height - start->y, c1);
-  while (start->y > 0) {
+  write_pixel(c, start->vals[0], c->height - start->vals[1], c1);
+  while (start->vals[1] > 0) {
     tick(start, vel, G, wind);
-    write_pixel(c, start->x, c->height - start->y, c1);
+    write_pixel(c, start->vals[0], c->height - start->vals[1], c1);
   }
 
   canvas_to_ppm(c, stdout);

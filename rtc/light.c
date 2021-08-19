@@ -1,35 +1,4 @@
-#include "tuple.h"
-#include "pattern.h"
-#include "../utils/funcs.h"
-
-#pragma once
-
-typedef struct light {
-    Tuple *intensity;
-    Tuple *position;
-} Light;
-
-typedef Light* LightP;
-
-TEMPLATE_ARRAY(LightP);
-
-typedef struct {
-    Tuple *color;
-    float ambient;
-    float diffuse;
-    float specular;
-    float shininess;
-    Pattern *pattern;
-} Material;
-
-
-Light *point_light(Tuple *intensity, Tuple *position);
-void free_point_light(Light *light);
-Material *material();
-Material *copy_material(const Material *m);
-void set_color(Material *m, Tuple *color);
-void free_material(Material *m);
-Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv, bool in_shadow);
+#include "../rtc.h"
 
 Light *point_light(Tuple *intensity, Tuple *position) {
     Light *l = (Light*)malloc(sizeof(Light));
@@ -78,12 +47,12 @@ void free_material(Material *m) {
     free(m);
 }
 
-Tuple *lighting(const Material *m, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv, bool in_shadow) {
+Tuple *lighting(const Material *m, const Solid *object, const Light *l, const Tuple *point, const Tuple *eyev, const Tuple *normalv, bool in_shadow) {
     Tuple *color;
     if (m->pattern == NULL) {
         color = m->color;
     } else {
-        color = stripe_at(m->pattern, point);
+        color = stripe_at_object(m->pattern, object, point);
     }
     Tuple *effective_color = prod(copy_tuple(color), l->intensity);
     Tuple *lightv = norm(sub(copy_tuple(l->position), point));

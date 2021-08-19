@@ -1,12 +1,23 @@
-.PHONY: test cannon clock sphere phong render plane plane_stripe
+.PHONY: build clean test cannon clock sphere phong render plane plane_stripe
 
-CC=gcc
-CFLAGS=-O2 -g -lm
+CC:=gcc
+CFLAGS:=-O2 -g -lm -v
+# -march=armv8-a+fp+simd+crc -v
+SRC:=./rtc
+OBJ:=./build
+SRCS:=$(wildcard $(SRC)/*.c)
+OBJS:=$(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SRCS))
 
-%.o: **/%.{c,h}
-	$(CC) -c $*.c **/*.c $(CFLAGS)
+build:
+	mkdir -p build
 
-test: tests/tests_main.c
+clean:
+	rm -f build/*
+
+$(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+test: tests/tests_main.c $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 	./$@
 

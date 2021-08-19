@@ -2,48 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "../base/light.h"
-#include "../base/transforms.h"
-#include "../utils/funcs.h"
-#include "../utils/consts.h"
-#include "../solids/sphere.h"
-
-
-#pragma once
-
-typedef Solid* SolidP;
-TEMPLATE_ARRAY(SolidP);
-
-typedef struct world {
-    LightPArray *lights;
-    SolidPArray *objects;
-} World;
-
-typedef struct computations {
-    Solid* obj;
-    float t;
-    bool inside;
-    Tuple *point;
-    Tuple *eyev;
-    Tuple *normalv;
-    Tuple *over_point;
-} WorldComputation;
-
-void clean_Solid_array(SolidPArray *ar);
-World *world();
-World *default_world();
-void add_object(World *w, SolidP o);
-void add_light(World *w, Light *l);
-Solid *get_object(World *w, unsigned int i);
-Light *get_light(World *w, unsigned int i);
-void free_world(World *w);
-IntersectionArray *intersect_world(World *w, Ray *r);
-WorldComputation *world_computation(Solid *o, float t, Tuple *point, Tuple *eyev, Tuple *normalv);
-void free_world_computation(WorldComputation *wc);
-WorldComputation *prepare_computations(Intersection i, Ray *r);
-Tuple *shade_hit(World *w, WorldComputation *wc);
-Tuple *color_at(World *w, Ray *r);
-bool is_shadowed(World *w, Tuple *point);
+#include "../rtc.h"
 
 void clean_Solid_array(SolidPArray *ar) {
     for (unsigned int i = 0; i < ar->length; i++) {
@@ -79,7 +38,7 @@ World *default_world() {
 
     set_material(s, m);
     add_object(w, s);
-    
+
     s = sphere();
     set_transform(s, scaling(0.5, 0.5, 0.5));
     add_object(w, s);
@@ -163,6 +122,7 @@ Tuple *shade_hit(World *w, WorldComputation *wc) {
     for (unsigned int i = 0; i < w->lights->length; i++) {
         Tuple *c = lighting(
             wc->obj->material,
+            wc->obj,
             get_LightP_array(w->lights, i),
             wc->point,
             wc->eyev,
@@ -195,7 +155,7 @@ bool is_shadowed(World *w, Tuple *point) {
         Tuple *direction = sub(copy_tuple(l->position), point);
         float distance = magnitude(direction);
         norm(direction);
-        Ray *r = ray(point->x, point->y, point->z, direction->x, direction->y, direction->z);
+        Ray *r = ray(point->vals[0], point->vals[1], point->vals[2], direction->vals[0], direction->vals[1], direction->vals[2]);
         IntersectionArray *ia = intersect_world(w, r);
         Intersection h = hit(ia);
         clean_Intersection_array(ia); free_Intersection_array(ia); free(direction); free_ray(r);

@@ -1,7 +1,6 @@
 #include <math.h>
-#include "../base/ray.h"
-#include "../utils/consts.h"
-#include "../solids/sphere.h"
+
+#include "../rtc.h"
 #include "test.h"
 
 void TestPosition() {

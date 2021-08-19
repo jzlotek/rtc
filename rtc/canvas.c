@@ -1,22 +1,4 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include "tuple.h"
-#include "../utils/funcs.h"
-
-#pragma once
-
-typedef struct {
-    unsigned int width;
-    unsigned int height;
-    Tuple **__canvas;
-} Canvas;
-
-Canvas *canvas(unsigned int width, unsigned int height);
-void free_canvas(Canvas *c);
-void write_pixel(Canvas *c, unsigned int x, unsigned int h, const Tuple *color);
-Tuple *pixel_at(Canvas *c, unsigned int x, unsigned int y);
-void canvas_to_ppm(Canvas *c, FILE *stream);
+#include "../rtc.h"
 
 Canvas *canvas(unsigned int width, unsigned int height) {
     Canvas *c = (Canvas*)malloc(sizeof(Canvas));
@@ -43,9 +25,9 @@ void write_pixel(Canvas *c, unsigned int x, unsigned int h, const Tuple *color) 
     if (x < 0 || x >= c->width) return;
     if (h < 0 || h >= c->height) return;
     Tuple * pixel = c->__canvas[x + c->width * h];
-    pixel->x = color->x;
-    pixel->y = color->y;
-    pixel->z = color->z;
+    pixel->vals[0] = color->vals[0];
+    pixel->vals[1] = color->vals[1];
+    pixel->vals[2] = color->vals[2];
 }
 
 Tuple *pixel_at(Canvas *c, unsigned int x, unsigned int y) {
@@ -65,9 +47,9 @@ void canvas_to_ppm(Canvas *c, FILE *stream) {
             fprintf(stream, "\n");
         }
         Tuple *pixel = pixel_at(c, i % c->width, i / c->width);
-        int x = CLAMP(0, (int)(pixel->x * 255), 255);
-        int y = CLAMP(0, (int)(pixel->y * 255), 255);
-        int z = CLAMP(0, (int)(pixel->z * 255), 255);
+        int x = CLAMP(0, (int)(pixel->vals[0] * 255), 255);
+        int y = CLAMP(0, (int)(pixel->vals[1] * 255), 255);
+        int z = CLAMP(0, (int)(pixel->vals[2] * 255), 255);
         chars_written += fprintf(stream, "%d %d %d ", x, y, z);
     }
     fprintf(stream, "\n");

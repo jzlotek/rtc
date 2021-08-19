@@ -1,28 +1,6 @@
-#include "../base/tuple.h"
-#include "../base/transforms.h"
-#include "../base/matrix.h"
-#include "../base/ray.h"
-#include "../base/canvas.h"
-#include "world.h"
 #include <stdlib.h>
 
-#pragma once
-
-typedef struct {
-    unsigned int hsize;
-    unsigned int vsize;
-    float field_of_view;
-    float half_width;
-    float half_height;
-    float pixel_size;
-    Matrix *transform;
-} Camera;
-
-Camera *camera(unsigned int hsize, unsigned int vsize, float field_of_view);
-void free_camera(Camera *c);
-Camera *set_camera_transform(Camera *c, Matrix *t);
-Ray *ray_for_pixel(Camera *c, int x, int y);
-Canvas *render(Camera *c, World *world);
+#include "../rtc.h"
 
 Camera *camera(unsigned int hsize, unsigned int vsize, float field_of_view) {
     Camera *c = (Camera*)malloc(sizeof(Camera));
@@ -67,7 +45,14 @@ Ray *ray_for_pixel(Camera *c, int x, int y) {
     Tuple *pixel = apply(point(world_x, world_y, -1), t_inv);
     Tuple *origin = apply(point(0, 0, 0), t_inv);
     Tuple *direction = norm(sub(pixel, origin));
-    Ray *r = ray(origin->x, origin->y, origin->z, direction->x, direction->y, direction->z);
+    Ray *r = ray(
+            origin->vals[0],
+            origin->vals[1],
+            origin->vals[2],
+            direction->vals[0],
+            direction->vals[1],
+            direction->vals[2]
+    );
     free(direction); free(origin); free_matrix(t_inv);
     return r;
 }

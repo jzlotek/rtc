@@ -2,27 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#pragma once
-
-typedef struct {
-    float **data;
-    unsigned int rows;
-    unsigned int cols;
-} Matrix;
-
-Matrix *matrix(float data[4][4], unsigned int rows, unsigned int cols);
-void free_matrix(Matrix *m);
-Matrix *copy(const Matrix *src);
-Tuple *apply(Tuple *point, const Matrix *transform);
-bool mateq(const Matrix *m1, const Matrix *m2);
-Matrix *matmul(const Matrix *m1, const Matrix *m2);
-Matrix *I();
-Matrix *transpose(Matrix *m);
-Matrix *submatrix(const Matrix *a, unsigned int r, unsigned int c);
-float det(const Matrix *a);
-float minor(const Matrix *a, unsigned int i, unsigned int j);
-float cofactor(const Matrix *a, unsigned int i, unsigned int j);
-Matrix *inverse(const Matrix *m);
+#include "../rtc.h"
 
 Matrix *matrix(float data[4][4], unsigned int rows, unsigned int cols) {
     Matrix *m = (Matrix*)malloc(sizeof(Matrix));
@@ -68,18 +48,18 @@ Matrix *copy(const Matrix *src) {
 }
 
 float __mult_row(Tuple *t, const Matrix *m, unsigned int r) {
-    return m->data[r][0] * t->x +
-        m->data[r][1] * t->y +
-        m->data[r][2] * t->z +
-        m->data[r][3] * t->w;
+    return m->data[r][0] * t->vals[0] +
+        m->data[r][1] * t->vals[1] +
+        m->data[r][2] * t->vals[2] +
+        m->data[r][3] * t->vals[3];
 }
 
 Tuple *apply(Tuple *point, const Matrix *transform) {
     Tuple *tmp = vec(0, 0, 0);
-    tmp->x = __mult_row(point, transform, 0);
-    tmp->y = __mult_row(point, transform, 1);
-    tmp->z = __mult_row(point, transform, 2);
-    tmp->w = __mult_row(point, transform, 3);
+    tmp->vals[0] = __mult_row(point, transform, 0);
+    tmp->vals[1] = __mult_row(point, transform, 1);
+    tmp->vals[2] = __mult_row(point, transform, 2);
+    tmp->vals[3] = __mult_row(point, transform, 3);
     copy_from(point, tmp);
     free(tmp);
     return point;

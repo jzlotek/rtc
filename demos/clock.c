@@ -17,7 +17,7 @@ int main(void) {
         rotation_z(M_PI / 6 * i)
     );
     apply(hand, t);
-    write_pixel(c, hand->x + HALF_W, hand->y + HALF_H, c1);
+    write_pixel(c, hand->vals[0] + HALF_W, hand->vals[1] + HALF_H, c1);
     free(t); free(hand);
   }
 

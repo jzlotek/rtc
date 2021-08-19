@@ -1,4 +1,5 @@
-#include "../base/pattern.h"
+#include "../rtc.h"
+
 #include "test.h"
 
 void TestStripePatternStripeAtY() {
@@ -45,11 +46,53 @@ void TestStripePatternStripeAtX() {
     free_pattern(pattern);
 }
 
+void TestStripeObjectTransform() {
+    Solid *s = sphere();
+    set_transform(s, scaling(2,2,2));
+    Pattern *p = stripe_pattern(vec(1,1,1), vec(0,0,0));
+
+    Tuple *pt = point(1.5, 0, 0);
+    Tuple *c = stripe_at_object(p, s, pt);
+    Tuple white = {1,1,1};
+
+    TupleEqual(c, &white);
+    free(c); free(pt); free_solid(s); free_pattern(p);
+}
+
+void TestStripePatternTransform() {
+    Solid *s = sphere();
+    Pattern *p = stripe_pattern(vec(1,1,1), vec(0,0,0));
+    set_pattern_transform(p, scaling(2,2,2));
+
+    Tuple *pt = point(1.5, 0, 0);
+    Tuple *c = stripe_at_object(p, s, pt);
+    Tuple white = {1,1,1};
+
+    TupleEqual(c, &white);
+    free(c); free(pt); free_solid(s); free_pattern(p);
+}
+
+void TestStripeMultiTransform() {
+    Solid *s = sphere();
+    set_transform(s, scaling(2,2,2));
+    Pattern *p = stripe_pattern(vec(1,1,1), vec(0,0,0));
+    set_pattern_transform(p, translation(0.5,0,0));
+
+    Tuple *pt = point(2.5, 0, 0);
+    Tuple *c = stripe_at_object(p, s, pt);
+    Tuple white = {1,1,1};
+
+    TupleEqual(c, &white);
+    free(c); free(pt); free_solid(s); free_pattern(p);
+}
 
 void TestPatternsFeature() {
   Feature f = {"Patterns"};
   AddTest(&f, TestStripePatternStripeAtY, "A stripe pattern is constant in y");
   AddTest(&f, TestStripePatternStripeAtZ, "A stripe pattern is constant in z");
   AddTest(&f, TestStripePatternStripeAtX, "A stripe pattern alternates in x");
+  AddTest(&f, TestStripeObjectTransform, "Stripes with an object transformation");
+  AddTest(&f, TestStripePatternTransform, "Stripes with a pattern transformation");
+  AddTest(&f, TestStripeMultiTransform, "Stripes with a pattern and object transformation");
   AddFeature(f);
 }

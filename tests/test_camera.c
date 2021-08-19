@@ -1,5 +1,4 @@
-#include "../scene/camera.h"
-#include "../utils/consts.h"
+#include "../rtc.h"
 #include "test.h"
 
 #include <math.h>

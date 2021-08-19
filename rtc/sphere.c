@@ -1,16 +1,4 @@
-#include "../base/ray.h"
-#include "../base/matrix.h"
-#include "../utils/funcs.h"
-#include "../base/light.h"
-
-#include "solid.h"
-
-#pragma once
-
-
-Solid *sphere();
-IntersectionArray *sphere_intersect(Solid *sphere, const Ray *r);
-Tuple *sphere_normal_at(const Solid *s, const Tuple *pos);
+#include "../rtc.h"
 
 Solid *sphere() {
     Solid *s = solid();
@@ -35,7 +23,6 @@ IntersectionArray *sphere_intersect(Solid *sphere, const Ray *r) {
     free(oc);
     return arr;
 }
-
 
 Tuple *sphere_normal_at(const Solid *s, const Tuple *pos) {
     return copy_tuple(pos);

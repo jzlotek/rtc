@@ -1,38 +1,4 @@
-#include "../utils/consts.h"
-#include "../utils/funcs.h"
-#include "../base/matrix.h"
-#include "../base/light.h"
-#include "../base/ray.h"
-
-#pragma once
-
-typedef struct solid Solid;
-
-typedef struct {
-    float t;
-    Solid *solid;
-} __intersection;
-typedef __intersection* Intersection;
-
-TEMPLATE_ARRAY(Intersection);
-
-struct solid {
-    ObjectType type;
-    Matrix *transform;
-    Material *material;
-    void *data;
-    IntersectionArray *(*intersect_func)(Solid *solid, const Ray *r);
-    Tuple *(*normal_at_func)(const Solid *solid, const Tuple *pos);
-    void (*free_data_func)(void*);
-};
-
-Solid *solid();
-void set_transform(Solid *solid, Matrix *m);
-void set_material(Solid *solid, Material *m);
-IntersectionArray *intersect(Solid *solid, const Ray *r);
-Tuple *normal_at(const Solid *s, const Tuple *pos);
-void clean_Intersection_array(IntersectionArray *ia);
-Intersection intersection(float t, Solid *solid);
+#include "../rtc.h"
 
 Intersection intersection(float t, Solid *solid) {
     Intersection i = (Intersection)malloc(sizeof(__intersection));
@@ -118,8 +84,72 @@ Tuple *normal_at(const Solid *s, const Tuple *pos) {
     Tuple *world_normal = s->normal_at_func(s, world_point);
     free(world_point);
     world_normal = apply(world_normal, transpose(transform_inv));
-    world_normal->w = 0;
+    world_normal->vals[3] = 0;
 
     free_matrix(transform_inv);
     return norm(world_normal);
+}
+
+
+Pattern *pattern_conatainer() {
+    Pattern *pattern = (Pattern*)malloc(sizeof(Pattern));
+    return pattern;
+}
+
+void free_stripe_pattern(void *p) {
+    StripePattern *pattern = (StripePattern*)p;
+    free(pattern->a);
+    free(pattern->b);
+    free(pattern);
+}
+
+Tuple *stripe_at_helper(void *p, const Tuple *point) {
+    StripePattern *pattern = (StripePattern*)p;
+    if ((int)floor(point->vals[0]) % 2 == 0) {
+        return pattern->a;
+    }
+    return pattern->b;
+}
+
+Pattern *stripe_pattern(Tuple *a, Tuple *b) {
+    Pattern *p = pattern_conatainer();
+    StripePattern *sp = (StripePattern*)malloc(sizeof(StripePattern));
+    sp->a = a;
+    sp->b = b;
+    p->pattern_p = sp;
+    p->free_func = free_stripe_pattern;
+    p->stripe_at_func = stripe_at_helper;
+    return p;
+}
+
+void free_pattern(Pattern *pattern) {
+    pattern->free_func(pattern->pattern_p);
+    if (pattern->transform != NULL) {
+        free_matrix(pattern->transform);
+    }
+    free(pattern);
+}
+
+Tuple *stripe_at(Pattern *pattern, const Tuple *point) {
+    return pattern->stripe_at_func(pattern->pattern_p, point);
+}
+
+void set_pattern_transform(Pattern *pattern, Matrix *transform) {
+    if (pattern->transform != NULL) {
+        free_matrix(pattern->transform);
+    }
+    pattern->transform = transform;
+}
+
+Tuple *stripe_at_object(Pattern *pattern, Solid *object, Tuple *pt) {
+    Matrix *m = inverse(object->transform);
+    Tuple *object_point = apply(copy_tuple(pt), m);
+    free_matrix(m);
+    m = inverse(pattern->transform);
+    Tuple *pattern_point = apply(object_point, m);
+    free_matrix(m);
+    Tuple *ret = stripe_at(pattern, pattern_point);
+    free(pattern_point);
+
+    return ret;
 }

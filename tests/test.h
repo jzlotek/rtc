@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../utils/consts.h"
-#include "../utils/funcs.h"
-#include "../base/tuple.h"
 
-#pragma once
+#include "../rtc.h"
+
+#ifndef __RTC_TESTS__
+#define __RTC_TESTS__
 
 const int RTC_BUFLEN = 256;
 typedef struct {
@@ -63,7 +63,7 @@ int RunTests() {
                 printf("%s\n", "❌");
             }
             for (unsigned int j = 0; j < rtc_statements->length; j++) {
-                printf(get_String_array(rtc_statements, j));
+                printf("%s\n", get_String_array(rtc_statements, j));
             }
             clean_String_array(rtc_statements);
             free_String_array(rtc_statements);
@@ -87,7 +87,7 @@ bool TupleEqual(Tuple *t1, Tuple *t2) {
     if (!result) {
         char *buf = (char*)malloc(sizeof(char) * RTC_BUFLEN * 2);
         sprintf(buf, "\t\t\t Got: {%.6f, %.6f, %.6f, %.6f}, Expected: {%.6f, %.6f, %.6f, %.6f}\n",
-                t1->x, t1->y, t1->z, t1->w, t2->x, t2->y, t2->z, t2->w);
+                t1->vals[0], t1->vals[1], t1->vals[2], t1->vals[3], t2->vals[0], t2->vals[1], t2->vals[2], t2->vals[3]);
         String_arr_add(rtc_statements, buf);
     }
     return result;
@@ -140,3 +140,5 @@ bool False(bool a) {
     }
     return !a;
 }
+
+#endif

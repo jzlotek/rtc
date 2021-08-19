@@ -1,9 +1,4 @@
-#include <math.h>
-#include "../scene/camera.h"
-#include "../scene/world.h"
-#include "../solids/plane.h"
-#include "../solids/sphere.h"
-#include "../base/pattern.h"
+#include "../rtc.h"
 
 int main(void) {
   Solid *p = plane();

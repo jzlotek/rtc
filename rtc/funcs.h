@@ -36,7 +36,10 @@ void TYPE##_arr_add(TYPE##Array *arr, TYPE v) {\
      }\
      arr->data[arr->length] = v;\
      arr->length++;\
-}
+}\
+
+#ifndef __BASIC_ARRAYS__
+#define __BASIC_ARRAYS__
 
 TEMPLATE_ARRAY(int);
 TEMPLATE_ARRAY(float);
@@ -47,3 +50,4 @@ void clean_String_array(StringArray *a) {
         free(a->data[i]);
     }
 }
+#endif

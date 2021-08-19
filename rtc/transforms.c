@@ -1,19 +1,6 @@
 #include <stdarg.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include "matrix.h"
-#include "tuple.h"
 
-#pragma once
-
-Matrix *translation(float x, float y, float z);
-Matrix *scaling(float x, float y, float z);
-Matrix *rotation_x(float r);
-Matrix *rotation_y(float r);
-Matrix *rotation_z(float r);
-Matrix *shear(float xy, float xz, float yx, float yz, float zx, float zy);
-Matrix *chain_matmul(int count, ...);
-Matrix *view_transform(Tuple *from, Tuple *to, Tuple *up);
+#include "../rtc.h"
 
 Matrix *translation(float x, float y, float z) {
     Matrix *ret = I();
@@ -93,17 +80,17 @@ Matrix *view_transform(Tuple *from, Tuple *to, Tuple *up) {
     Tuple *left = cross(forward, norm(up));
     Tuple *true_up = cross(left, forward);
     Matrix *orientation = I();
-    orientation->data[0][0] = left->x;
-    orientation->data[0][1] = left->y;
-    orientation->data[0][2] = left->z;
-    orientation->data[1][0] = true_up->x;
-    orientation->data[1][1] = true_up->y;
-    orientation->data[1][2] = true_up->z;
-    orientation->data[2][0] = -forward->x;
-    orientation->data[2][1] = -forward->y;
-    orientation->data[2][2] = -forward->z;
+    orientation->data[0][0] = left->vals[0];
+    orientation->data[0][1] = left->vals[1];
+    orientation->data[0][2] = left->vals[2];
+    orientation->data[1][0] = true_up->vals[0];
+    orientation->data[1][1] = true_up->vals[1];
+    orientation->data[1][2] = true_up->vals[2];
+    orientation->data[2][0] = -forward->vals[0];
+    orientation->data[2][1] = -forward->vals[1];
+    orientation->data[2][2] = -forward->vals[2];
 
-    Matrix *res = chain_matmul(2, translation(-from->x, -from->y, -from->z), orientation);
+    Matrix *res = chain_matmul(2, translation(-from->vals[0], -from->vals[1], -from->vals[2]), orientation);
     free(from); free(to); free(up); free(left); free(true_up);
     return res;
 }
